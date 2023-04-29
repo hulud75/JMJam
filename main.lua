@@ -83,6 +83,7 @@ function love.draw()
     end
     burn:draw()
     evil:draw(world_x, world_y)
+    bg:draw_overlay(world_x, world_y)
 end
 
 function love.update(dt)
