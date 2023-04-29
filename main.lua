@@ -63,6 +63,7 @@ end
 function love.update(dt)
     world:update(dt)
     evil:update(dt)
+    bg:update(dt)
 
     hero_x, hero_y = hero:getPosition()
 
