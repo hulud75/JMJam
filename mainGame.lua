@@ -1,5 +1,5 @@
 require("bg")
---require("buttonStart")
+require("buttonEnd")
 require("body")
 require("evil")
 require("burn")
@@ -15,11 +15,11 @@ people_radius = 16
 world_x = 0
 world_y = 0
 
---startButton_x = 1100
---startButton_y = 800
---scaleButton_X = 150
---scaleButton_Y = 125
---startButton_R = 0
+endButton_x = 1100
+endtButton_y = -800
+scaleButton_X = 150
+scaleButton_Y = 125
+startButton_R = 0
 
 function rect(x, y, w, h)
     return {x=x, y=y, w=w, h=h}
@@ -43,15 +43,25 @@ isDown = love.keyboard.isDown
 
 hero = {}
 people = {}
+mainGame = {}
 
 function angleFromDir(x, y)
     return math.pi*2 + math.atan2(y, x)
 end
 
-mainGame = {}
+
+eButton  = {
+    image  = buttonEnd.image,
+    x      = endButton_x,
+    y      = endButton_y,
+    width  = scaleButton_X,
+    height = scaleButton_Y,
+}
+
 
 function mainGame.load()
     bg:load()
+    buttonEnd:load()
     evil:load()
     burn:load()
     load_body()
@@ -73,8 +83,16 @@ function mainGame.load()
     end
 end
 
+function mainGame.mousepressed(mx, my, endButton)
+    if endButton == 1 and mx >= eButton.x and mx < eButton.x+eButton.width and my >= eButton.y and my < eButton.y+eButton.height then
+        print("Return to main page!")
+        --page = "Game"
+    end
+end
+
 function mainGame.draw()
     bg:draw(world_x, world_y)
+    buttonEnd:draw(endButton_x,endButton_y,scaleButton_X,scaleButton_Y)
     hero:draw()
     if debug then hero.path:draw() end
     for k,p in pairs(people) do
