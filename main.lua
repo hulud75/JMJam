@@ -1,8 +1,15 @@
+require("bg")
+require("body")
+require("evil")
+
 window_w = 1280
 window_h = 960
 speed = 100
 people_count = 300
 people_radius = 16
+-- world coordinate of the upper left corner
+world_x = 0
+world_y = 0
 
 function rect(x, y, w, h)
     return {x=x, y=y, w=w, h=h}
@@ -13,45 +20,51 @@ function normalize(x, y)
     return x/l, y/l
 end
 
+function world_to_screen(x, y)
+    return x-world_x, y-world_y
+end
+
+function clamp(x, min, max)
+    return math.max(math.min(x, max), min)
+end
+
 isDown = love.keyboard.isDown
 
 hero = {}
 people = {}
 
 function love.load()
+    bg:load()
+    evil:load()
     love.window.setMode(window_w, window_h)
     love.physics.setMeter(32)
     world = love.physics.newWorld(0, 0, true)
-    hero.body = love.physics.newBody(world, 20, 20, "static")
-    hero.shape = love.physics.newCircleShape(people_radius)
-    hero.fixture = love.physics.newFixture(hero.body, hero.shape, 1)
-    hero_x, hero_y = hero.body:getPosition()
-    for i=1,people_count do
-        p = {}
-        x = math.random(0, window_w)
-        y = math.random(0, window_h)
-        p.body = love.physics.newBody(world, x, y, "dynamic")
-        p.shape = love.physics.newCircleShape(people_radius)
-        p.fixture = love.physics.newFixture(p.body, p.shape, 1)
 
+    local start_x = window_w/2
+    local start_y = bg.image:getHeight()/2
+    hero = body(start_x, start_y, "static", people_radius, "fill")
+    for i=1,people_count do
+        local x = math.random(0, bg.image:getWidth())
+        local y = math.random(0, bg.image:getHeight())
+        local p = body(x, y, "dynamic", people_radius, "line")
         table.insert(people, p)
     end
 end
 
 function love.draw()
-    x, y = hero.body:getPosition()
-    love.graphics.print("Hello World", 400, 300)
-    love.graphics.rectangle("fill", x, y, people_radius*2, people_radius*2)
+    bg:draw(world_x, world_y)
+    hero:draw()
     for k,p in pairs(people) do
-        x, y = p.body:getPosition()
-        love.graphics.rectangle("line", x, y, people_radius*2, people_radius*2)
+        p:draw()
     end
+    evil:draw(world_x, world_y)
 end
 
 function love.update(dt)
     world:update(dt)
+    evil:update(dt)
 
-    hero_x, hero_y = hero.body:getPosition()
+    hero_x, hero_y = hero:getPosition()
 
     function move_hero(x, y)
         hero_x = hero_x+x
@@ -72,10 +85,25 @@ function love.update(dt)
         move_hero(0, hero_speed)
     end
 
-    hero.body:setPosition(hero_x, hero_y)
+    -- Update the hero position
+    local diameter = hero.shape:getRadius()*2
+    hero_x = clamp(hero_x, 0, bg.image:getWidth()-diameter)
+    hero_y = clamp(hero_y, 0, bg.image:getHeight()-diameter)
+    hero:setPosition(hero_x, hero_y)
+
+    -- Update the view position
+    world_x = clamp(hero_x - window_w/2, 0, bg.image:getWidth()-window_w)
+    world_y = clamp(hero_y - window_h/2, 0, bg.image:getHeight()-window_h)
+
+    if evil:die(hero_x, hero_y) then
+        hero:die()
+    end
 
     for k,p in pairs(people) do
-        x, y = p.body:getPosition()
+        x, y = p:getPosition()
+        if evil:die(x, y) then
+            p:die()
+        end
         dx, dy = normalize(hero_x-x, hero_y-y)
         p.body:setLinearVelocity(dx*dt*10000, dy*dt*10000)
     end
