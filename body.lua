@@ -28,5 +28,13 @@ function body(x, y, physic_mode, radius, render_mode)
         self.alive = false
     end
 
+
+    function result.update(self, dt)
+        x, y = self:getPosition()
+        if evil:die(x, y) or bg:die(x, y) then
+            self:die()
+        end
+    end
+
     return result
 end

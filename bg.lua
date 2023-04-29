@@ -1,8 +1,11 @@
 bg = {}
 
 function bg.load(self)
-    bg.image = love.graphics.newImage("lava_01.png")
-    bg.ground = love.graphics.newImage("ground_01.png")
+    bg.lava = love.graphics.newImage("lava_01.png")
+    bg.groundData = love.image.newImageData("ground_01.png")
+    bg.ground = love.graphics.newImage(bg.groundData)
+    bg.w = bg.ground:getWidth()
+    bg.h = bg.ground:getHeight()
     bg.shader = love.graphics.newShader [[
         extern number time;
         extern number world_x;
@@ -46,8 +49,16 @@ function bg.draw(self)
     local r = 0
 
     love.graphics.setShader(bg.shader)
-    love.graphics.draw(self.image, -world_x, -world_y, r)
+    love.graphics.draw(self.lava, -world_x, -world_y, r)
 
     love.graphics.setShader()
     love.graphics.draw(self.ground, -world_x, -world_y, r)
+end
+
+function bg.die(self, x, y)
+    if (x >= 0 and x < self.w and y >= 0 and y < self.h) then
+        r, g, b, a = bg.groundData:getPixel(x, y)
+        return a < 0.5
+    end
+    return false
 end

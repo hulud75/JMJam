@@ -41,11 +41,11 @@ function love.load()
     world = love.physics.newWorld(0, 0, true)
 
     local start_x = window_w/2
-    local start_y = bg.image:getHeight()/2
+    local start_y = bg.ground:getHeight()/2
     hero = body(start_x, start_y, "static", people_radius, "fill")
     for i=1,people_count do
-        local x = math.random(0, bg.image:getWidth())
-        local y = math.random(0, bg.image:getHeight())
+        local x = math.random(0, bg.ground:getWidth())
+        local y = math.random(0, bg.ground:getHeight())
         local p = body(x, y, "dynamic", people_radius, "line")
         table.insert(people, p)
     end
@@ -88,23 +88,19 @@ function love.update(dt)
 
     -- Update the hero position
     local diameter = hero.shape:getRadius()*2
-    hero_x = clamp(hero_x, 0, bg.image:getWidth()-diameter)
-    hero_y = clamp(hero_y, 0, bg.image:getHeight()-diameter)
+    hero_x = clamp(hero_x, 0, bg.ground:getWidth()-diameter)
+    hero_y = clamp(hero_y, 0, bg.ground:getHeight()-diameter)
     hero:setPosition(hero_x, hero_y)
 
     -- Update the view position
-    world_x = clamp(hero_x - window_w/2, 0, bg.image:getWidth()-window_w)
-    world_y = clamp(hero_y - window_h/2, 0, bg.image:getHeight()-window_h)
+    world_x = clamp(hero_x - window_w/2, 0, bg.ground:getWidth()-window_w)
+    world_y = clamp(hero_y - window_h/2, 0, bg.ground:getHeight()-window_h)
 
-    if evil:die(hero_x, hero_y) then
-        hero:die()
-    end
+    hero:update(dt)
 
     for k,p in pairs(people) do
+        p:update(dt)
         x, y = p:getPosition()
-        if evil:die(x, y) then
-            p:die()
-        end
         dx, dy = normalize(hero_x-x, hero_y-y)
         p.body:setLinearVelocity(dx*dt*10000, dy*dt*10000)
     end
