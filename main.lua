@@ -2,6 +2,7 @@ require("bg")
 require("buttonStart")
 require("body")
 require("evil")
+require("burn")
 
 window_w = 1280
 window_h = 960
@@ -49,6 +50,7 @@ function love.load()
     bg:load()
     buttonStart:load()
     evil:load()
+    burn:load()
     load_body()
     love.window.setMode(window_w, window_h)
     love.physics.setMeter(32)
@@ -73,6 +75,7 @@ function love.draw()
     for k,p in pairs(people) do
         p:draw()
     end
+    burn:draw()
     evil:draw(world_x, world_y)
 end
 
@@ -80,7 +83,8 @@ function love.update(dt)
     world:update(dt)
     evil:update(dt)
     bg:update(dt)
-    
+    burn:update(dt)
+
     hero_x, hero_y = hero:getPosition()
 
     walk = false

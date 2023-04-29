@@ -46,7 +46,11 @@ function body(x, y, physic_mode, radius, render_mode)
     end
 
     function result.die(self)
-        self.alive = false
+        if self.alive then
+            self.alive = false
+            x, y = self.body:getPosition()
+            burn:create(x, y)
+        end
     end
 
     function result.walk(self)
