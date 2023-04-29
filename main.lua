@@ -33,9 +33,14 @@ isDown = love.keyboard.isDown
 hero = {}
 people = {}
 
+function angleFromDir(x, y)
+    return math.pi*2 + math.atan2(y, x)
+end
+
 function love.load()
     bg:load()
     evil:load()
+    load_body()
     love.window.setMode(window_w, window_h)
     love.physics.setMeter(32)
     world = love.physics.newWorld(0, 0, true)
@@ -67,30 +72,40 @@ function love.update(dt)
 
     hero_x, hero_y = hero:getPosition()
 
-    function move_hero(x, y)
-        hero_x = hero_x+x
-        hero_y = hero_y+y
+    walk = false
+
+    local hero_dir_x = 0
+    local hero_dir_y = 0
+
+    function move_hero(x, y, angle)
+        hero_dir_x = hero_dir_x+x
+        hero_dir_y = hero_dir_y+y
+        walk = true
     end
 
-    hero_speed = 400*dt
+    local hero_speed = 400*dt
     if isDown("right") then
-        move_hero(hero_speed, 0)
+        move_hero(hero_speed, 0, 0)
     end
     if isDown("left") then
-        move_hero(-hero_speed, 0)
+        move_hero(-hero_speed, 0, math.pi)
     end
     if isDown("up") then
-        move_hero(0, -hero_speed)
+        move_hero(0, -hero_speed, math.pi*3/2)
     end
     if isDown("down") then
-        move_hero(0, hero_speed)
+        move_hero(0, hero_speed, math.pi/2)
     end
 
     -- Update the hero position
     local diameter = hero.shape:getRadius()*2
-    hero_x = clamp(hero_x, 0, bg.ground:getWidth()-diameter)
-    hero_y = clamp(hero_y, 0, bg.ground:getHeight()-diameter)
+    hero_x = clamp(hero_x+hero_dir_x, 0, bg.ground:getWidth()-diameter)
+    hero_y = clamp(hero_y+hero_dir_y, 0, bg.ground:getHeight()-diameter)
     hero:setPosition(hero_x, hero_y)
+    if walk then
+        hero:walk()
+    end
+    hero:setAngle(angleFromDir(hero_dir_x, hero_dir_y))
 
     -- Update the view position
     world_x = clamp(hero_x - window_w/2, 0, bg.ground:getWidth()-window_w)
@@ -99,9 +114,11 @@ function love.update(dt)
     hero:update(dt)
 
     for k,p in pairs(people) do
+        p:walk()
         p:update(dt)
         x, y = p:getPosition()
         dx, dy = normalize(hero_x-x, hero_y-y)
+        p:setAngle(angleFromDir(dx, dy))
         p.body:setLinearVelocity(dx*dt*10000, dy*dt*10000)
     end
 end

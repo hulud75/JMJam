@@ -2,7 +2,7 @@ bg = {}
 
 function bg.load(self)
     bg.lava = love.graphics.newImage("lava_01.png")
-    bg.groundData = love.image.newImageData("ground_01.png")
+    bg.groundData = love.image.newImageData("ground_02.png")
     bg.ground = love.graphics.newImage(bg.groundData)
     bg.w = bg.ground:getWidth()
     bg.h = bg.ground:getHeight()
