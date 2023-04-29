@@ -3,7 +3,10 @@ require("buttonStart")
 require("body")
 require("evil")
 require("burn")
+require("path")
+require("math_utils")
 
+debug = true
 window_w = 1280
 window_h = 960
 speed = 100
@@ -59,6 +62,8 @@ function love.load()
     local start_x = window_w/2
     local start_y = bg.ground:getHeight()/2
     hero = body(start_x, start_y, "static", people_radius, "fill")
+    hero.path = Path:new()
+    hero.path:addPoint(start_x, start_y)
 
     for i=1,people_count do
         local x = math.random(0, bg.ground:getWidth())
@@ -72,6 +77,7 @@ function love.draw()
     bg:draw(world_x, world_y)
     buttonStart:draw(startButton_x,startButton_y,scaleButton_X,scaleButton_Y)
     hero:draw()
+    if debug then hero.path:draw() end
     for k,p in pairs(people) do
         p:draw()
     end
@@ -127,6 +133,11 @@ function love.update(dt)
     world_y = clamp(hero_y - window_h/2, 0, bg.ground:getHeight()-window_h)
 
     hero:update(dt)
+    local lpx, lpy = hero.path:getLastPoint()
+    if distance(hero_x, hero_y, lpx, lpy) > 100 then
+        print("putting down a point")
+        hero.path:addPoint(hero_x, hero_y)
+    end
 
     for k,p in pairs(people) do
         p:walk()
