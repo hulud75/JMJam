@@ -1,3 +1,7 @@
+local function normalize(x, y)
+    local l = math.sqrt(x*x+y*y)
+    return x/l, y/l
+end
 
 function load_body()
     sprite_animation_steps = 8
@@ -24,16 +28,18 @@ function body(x, y, physic_mode, radius, render_mode)
     result.fixture = love.physics.newFixture(result.body, result.shape, 1)
 
     function result.draw(self)
-        x, y = self.body:getPosition()
-        radius = self.shape:getRadius()
+        local x, y = self.body:getPosition()
+        local radius = self.shape:getRadius()
         if self.alive then
             love.graphics.setColor(1, 1, 1)
         else
             love.graphics.setColor(1, 0, 0)
         end
+
         local anim_frame = math.floor(math.mod(self.animation, sprite_animation_steps))+1
         local dir = math.floor(math.mod(self.angle * sprite_dir_steps / (2.0*math.pi) + 0.5, sprite_dir_steps))+1
         love.graphics.draw(body_sprites_image, body_sprites_quads[anim_frame][dir], (x-world_x + radius) - body_sprite_w/2, (y-world_y + radius) - body_sprite_h/2)
+
         love.graphics.setColor(1, 1, 1)
     end
 
@@ -66,6 +72,76 @@ function body(x, y, physic_mode, radius, render_mode)
         if evil:die(x, y) or bg:die(x, y) then
             self:die()
         end
+    end
+
+    function result.updateVelocity(self, id)
+        local px, py = self.body:getPosition()
+        local vx, vy = self.body:getLinearVelocity()
+
+        -- constants
+        local heroAuraRange = 300
+        local visualRange = 100
+        local protectedRange = 30
+        local centeringFactor = 0.005
+        local avoidFactor = 0.5
+        local matchingFactor = 0.5
+        local maxSpeed = 200
+
+        -- accumulators
+        local xPosAvg, yPosAvg = 0, 0
+        local xVelAvg, yVelAvg = 0, 0
+        local neighbors = 0
+        local closeDx, closeDy = 0, 0
+
+        for i, p in ipairs(people) do
+            if i ~= id then
+                local opx, opy = p.body:getPosition()
+                local ovx, ovy = p.body:getLinearVelocity()
+                local dx = px - opx
+                local dy = py - opy
+
+                if math.abs(dx) < visualRange and math.abs(dy) < visualRange then
+                    local squaredDistance = dx*dx + dy*dy
+                    if squaredDistance < protectedRange*protectedRange then
+                        closeDx = closeDx + px - opx
+                        closeDy = closeDy + py - opy
+                    elseif squaredDistance < visualRange*visualRange then
+                        xPosAvg = xPosAvg + opx
+                        yPosAvg = yPosAvg + opy
+                        xVelAvg = xVelAvg + ovx
+                        yVelAvg = yVelAvg + ovy
+                        neighbors = neighbors + 1
+                    end
+                end
+            end
+        end
+
+        if neighbors > 0 then
+            xPosAvg = xPosAvg / neighbors
+            yPosAvg = yPosAvg / neighbors
+            xVelAvg = xVelAvg / neighbors
+            yVelAvg = yVelAvg / neighbors
+
+            vx = vx + (xPosAvg-px) * centeringFactor + (xVelAvg - vx) * matchingFactor
+            vy = vy + (yPosAvg-py) * centeringFactor + (yVelAvg - vy) * matchingFactor
+        end
+
+        if hero_x-x < heroAuraRange and hero_y-y < heroAuraRange then
+            local dhx, dhy = normalize(hero_x - x, hero_y - y)
+            vx = vx + dhx * 10
+            vy = vy + dhy * 10
+        end
+
+        vx = vx + closeDx * avoidFactor
+        vy = vy + closeDy * avoidFactor
+
+        local speed = math.sqrt(vx*vx + vy*vy)
+        if speed > maxSpeed then
+            vx = vx/speed*maxSpeed
+            vy = vy/speed*maxSpeed
+        end
+
+        self.body:setLinearVelocity(vx, vy)
     end
 
     return result

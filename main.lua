@@ -134,7 +134,7 @@ function love.update(dt)
         x, y = p:getPosition()
         dx, dy = normalize(hero_x-x, hero_y-y)
         p:setAngle(angleFromDir(dx, dy))
-        p.body:setLinearVelocity(dx*dt*10000, dy*dt*10000)
+        p:updateVelocity(k)
     end
 end
 

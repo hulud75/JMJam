@@ -45,7 +45,7 @@ function bg.update(self, dt)
 end
 
 function bg.draw(self)
-    --local r = -math.pi/4
+    -- local r = -math.pi/4
     local r = 0
 
     love.graphics.setShader(bg.shader)
