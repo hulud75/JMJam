@@ -1,4 +1,5 @@
 require("bg")
+require("buttonStart")
 require("body")
 require("evil")
 
@@ -10,6 +11,12 @@ people_radius = 16
 -- world coordinate of the upper left corner
 world_x = 0
 world_y = 0
+
+startButton_x = 1100
+startButton_y = 800
+scaleButton_X = 150
+scaleButton_Y = 125
+startButton_R = 0
 
 function rect(x, y, w, h)
     return {x=x, y=y, w=w, h=h}
@@ -28,6 +35,7 @@ function clamp(x, min, max)
     return math.max(math.min(x, max), min)
 end
 
+
 isDown = love.keyboard.isDown
 
 hero = {}
@@ -39,15 +47,17 @@ end
 
 function love.load()
     bg:load()
+    buttonStart:load()
     evil:load()
     load_body()
     love.window.setMode(window_w, window_h)
     love.physics.setMeter(32)
     world = love.physics.newWorld(0, 0, true)
-
+    
     local start_x = window_w/2
     local start_y = bg.ground:getHeight()/2
     hero = body(start_x, start_y, "static", people_radius, "fill")
+
     for i=1,people_count do
         local x = math.random(0, bg.ground:getWidth())
         local y = math.random(0, bg.ground:getHeight())
@@ -58,6 +68,7 @@ end
 
 function love.draw()
     bg:draw(world_x, world_y)
+    buttonStart:draw(startButton_x,startButton_y,scaleButton_X,scaleButton_Y)
     hero:draw()
     for k,p in pairs(people) do
         p:draw()
@@ -69,7 +80,7 @@ function love.update(dt)
     world:update(dt)
     evil:update(dt)
     bg:update(dt)
-
+    
     hero_x, hero_y = hero:getPosition()
 
     walk = false
