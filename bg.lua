@@ -69,7 +69,7 @@ function bg.draw_overlay(self)
 end
 
 function bg.heat(self, x, y)
-    return self:isLava(x, y) and 0.4 or 0
+    return self:isLava(x, y) and 1 or 0
 end
 
 function bg.isLava(self, x, y)
