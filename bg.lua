@@ -1,5 +1,9 @@
 bg = {}
 
+goal_x = 15472
+goal_y = 1024
+goal_radius_sq = 600*600
+
 function bg.load(self)
     bg.lava = love.graphics.newImage("lava_0000.png")
     bg.lava:setWrap("repeat", "repeat")
@@ -74,4 +78,10 @@ function bg.isLava(self, x, y)
         return a < 0.5
     end
     return false
+end
+
+function bg.isGoal(self, x, y)
+    dx = x-goal_x
+    dy = y-goal_y
+    return dx*dx+dy*dy < goal_radius_sq
 end

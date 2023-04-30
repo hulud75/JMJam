@@ -26,12 +26,16 @@ function burn.update(self, dt)
     end
 end
 
-function burn.create(self, x, y)
+function burn.create(self, x, y, burn)
     local psystem = love.graphics.newParticleSystem(particle_img, 32)
     psystem:setParticleLifetime(0.5, 1) -- Particles live at least 2s and at most 5s.
     psystem:setRadialAcceleration(2000, 4000)
     psystem:setEmissionArea("uniform", 50, 50)
-    psystem:setColors(255, 255, 0, 255, 128, 0, 0, 255, 0, 0, 0, 0) -- Fade to black.    
+    if burn then
+        psystem:setColors(255, 255, 0, 255, 128, 0, 0, 255, 0, 0, 0, 0) -- Fade to black.    
+    else
+        psystem:setColors(255, 255, 255, 255, 0, 255, 0, 255, 0, 255, 0, 0) -- Fade to black.    
+    end
     table.insert(self.psystems, { psystem = psystem, x = x, y = y } )
     psystem:emit(32)
     burn_sound:play()

@@ -53,11 +53,13 @@ function mainGame.load()
 end
 
 function mainGame.restart(self)
+    score_saved = 0
+    score_killed = 0
     world = love.physics.newWorld(0, 0, true)
     evil:restart()
     local start_x = math.sqrt(2)*math.max(window_w, window_h)*0.5
     local start_y = bg.ground:getHeight()/2
-    hero = body(start_x, start_y, "static", people_radius, "fill", shaman_sprites)
+    hero = body(start_x, start_y, "static", people_radius, "fill", shaman_sprites, true)
     hero.path = Path:new()
     hero.path:addPoint(start_x, start_y)
 
@@ -65,7 +67,7 @@ function mainGame.restart(self)
     for i=1,people_count do
         local x = math.random(0, bg.ground:getWidth())
         local y = math.random(0, bg.ground:getHeight())
-        local p = body(x, y, "dynamic", people_radius, "line", peon_sprites)
+        local p = body(x, y, "dynamic", people_radius, "line", peon_sprites, false)
         people[p] = true
     end
     game_over_time = nil

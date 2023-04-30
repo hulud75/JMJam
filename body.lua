@@ -1,6 +1,6 @@
 require("math_utils")
 
-function body(x, y, physic_mode, radius, render_mode, sprites)
+function body(x, y, physic_mode, radius, render_mode, sprites, shaman)
     local result = {
         render_mode = render_mode,
         alive = true,
@@ -9,7 +9,9 @@ function body(x, y, physic_mode, radius, render_mode, sprites)
         heat = 0,
         maxSpeed = 900, maxForce = 40,
         ax = 0, ay = 0,
-        sprites = sprites
+        sprites = sprites,
+        teleporting = 0,
+        shaman = shaman
     }
     result.body = love.physics.newBody(world, x, y, physic_mode)
     result.shape = love.physics.newCircleShape(radius)
@@ -20,7 +22,7 @@ function body(x, y, physic_mode, radius, render_mode, sprites)
         if self.alive then
             local x, y = worldToScreen(self.body:getPosition())
             local radius = self.shape:getRadius()
-            love.graphics.setColor(1, 1-self.heat, 1-self.heat)
+            love.graphics.setColor(1-self.teleporting, 1-self.heat+self.teleporting, 1-self.heat-self.teleporting)
 
             self.sprites:draw((x + radius) - self.sprites.w/2, (y + radius) - self.sprites.h/2, self.animation, self.angle)
 
@@ -40,7 +42,16 @@ function body(x, y, physic_mode, radius, render_mode, sprites)
         if self.alive then
             self.alive = false
             x, y = self.body:getPosition()
-            burn:create(x, y)
+            burn:create(x, y, true)
+            people[self] = nil
+        end
+    end
+
+    function result.saved(self)
+        if self.alive then
+            self.alive = false
+            x, y = self.body:getPosition()
+            burn:create(x, y, false)
             people[self] = nil
         end
     end
@@ -55,6 +66,8 @@ function body(x, y, physic_mode, radius, render_mode, sprites)
 
     function result.update(self, dt)
         x, y = self:getPosition()
+
+        -- Heating
         local heating_speed = evil:heat(x, y) + bg:heat(x, y)
         if heating_speed > 0 then
             self.heat = self.heat+dt*heating_speed
@@ -64,6 +77,14 @@ function body(x, y, physic_mode, radius, render_mode, sprites)
         end
         if self.heat > 1 then
             self:die()
+        end
+
+        -- Goal
+        if bg:isGoal(x, y) and (not self.shaman or #people > 0) then
+            self.teleporting = self.teleporting + dt*1
+        end
+        if self.teleporting > 1 then
+            self:saved()
         end
     end
 
