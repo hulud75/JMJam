@@ -1,7 +1,7 @@
 Path = {}
 
 function Path:new()
-  local p = {points = {}, radius = 50}
+  local p = {points = {}, radius = 50, maxLength = 20}
   setmetatable(p, self)
   self.__index = self
   return p
@@ -10,6 +10,10 @@ end
 function Path:addPoint(px, py)
   table.insert(self.points, px)
   table.insert(self.points, py)
+  if #self.points > self.maxLength * 2 then
+    table.remove(self.points, 1)
+    table.remove(self.points, 1)
+  end
 end
 
 function Path:lastPoint()
@@ -39,7 +43,7 @@ function Path:draw()
   if #self.points >= 4 then
     love.graphics.push()
     love.graphics.translate(-screen_offset_x, -screen_offset_y)
-    love.graphics.rotate(-math.pi/4)
+    -- love.graphics.rotate(-math.pi/4)
     love.graphics.setLineWidth(self.radius * 2)
     love.graphics.line(self.points)
     love.graphics.pop()
