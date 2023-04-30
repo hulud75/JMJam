@@ -4,7 +4,7 @@ function load_body()
     sprite_animation_steps = 7
     sprite_dir_steps = 8
     body_sprites_imageData = love.image.newImageData("shamanSheet_01.png")
-    local remap_dir = {1, 0, 7, 6, 5, 4, 3, 2}
+    local remap_dir = {2, 1, 0, 7, 6, 5, 4, 3}
     body_sprites_image = love.graphics.newImage(body_sprites_imageData)
     body_sprite_w = body_sprites_imageData:getWidth() / sprite_animation_steps
     body_sprite_h = body_sprites_imageData:getHeight() / sprite_dir_steps
@@ -33,13 +33,13 @@ function body(x, y, physic_mode, radius, render_mode)
     result.fixture = love.physics.newFixture(result.body, result.shape, 1)
 
     function result.draw(self)
-        local x, y = self.body:getPosition()
+        local x, y = worldToScreen(self.body:getPosition())
         local radius = self.shape:getRadius()
         love.graphics.setColor(1, 1-self.heat, 1-self.heat)
 
         local anim_frame = math.floor(math.mod(self.animation, sprite_animation_steps))+1
         local dir = math.floor(math.mod(self.angle * sprite_dir_steps / (2.0*math.pi) + 0.5, sprite_dir_steps))+1
-        love.graphics.draw(body_sprites_image, body_sprites_quads[anim_frame][dir], (x-world_x + radius) - body_sprite_w/2, (y-world_y + radius) - body_sprite_h/2)
+        love.graphics.draw(body_sprites_image, body_sprites_quads[anim_frame][dir], (x + radius) - body_sprite_w/2, (y + radius) - body_sprite_h/2)
 
         love.graphics.setColor(1, 1, 1)
     end

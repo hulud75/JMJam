@@ -11,8 +11,8 @@ function bg.load(self)
     bg.lava_quad = love.graphics.newQuad(0, 0, bg.w, bg.h, bg.lava:getWidth(), bg.lava:getHeight())
     bg.shader = love.graphics.newShader [[
         extern number time;
-        extern number world_x;
-        extern number world_y;
+        extern number screen_offset_x;
+        extern number screen_offset_y;
         vec4 effect(vec4 color, Image texture, vec2 texture_coords, vec2 pixel_coords)
         {
             vec2 size = vec2(512, 512);
@@ -24,7 +24,7 @@ function bg.load(self)
             float paralax_space = 0.00001;
             float paralax_time = time*100;
 
-            vec2 paralax_offset = vec2(world_x*paralax_space+paralax_time, world_y*paralax_space);
+            vec2 paralax_offset = vec2(screen_offset_x*paralax_space+paralax_time, screen_offset_y*paralax_space);
 
             vec2 local = mod(texture_coords * size, period) / period;
             vec2 offset = vec2(
@@ -42,27 +42,25 @@ end
 
 function bg.update(self, dt)
     self.shader:send("time", self.time)
-    self.shader:send("world_x", world_x)
-    self.shader:send("world_y", world_y)
+    self.shader:send("screen_offset_x", screen_offset_x)
+    self.shader:send("screen_offset_y", screen_offset_y)
     self.time = self.time + dt/100
 end
 
 function bg.draw(self)
-    -- local r = -math.pi/4
-    local r = 0
+    local r = -math.pi/4
 
     love.graphics.setShader(bg.shader)
-    love.graphics.draw(self.lava, bg.lava_quad, -world_x, -world_y, r)
+    love.graphics.draw(self.lava, bg.lava_quad, -screen_offset_x, -screen_offset_y, r)
 
     love.graphics.setShader()
-    love.graphics.draw(self.ground, -world_x, -world_y, r)
+    love.graphics.draw(self.ground, -screen_offset_x, -screen_offset_y, r)
 end
 
 function bg.draw_overlay(self)
-    --local r = -math.pi/4
-    local r = 0
+    local r = -math.pi/4
     love.graphics.setBlendMode("add")
-    love.graphics.draw(self.lava_heat, -world_x, -world_y, r, 4)
+    love.graphics.draw(self.lava_heat, -screen_offset_x, -screen_offset_y, r, 4)
     love.graphics.setBlendMode("alpha")
 end
 

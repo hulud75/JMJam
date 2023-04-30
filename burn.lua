@@ -6,8 +6,10 @@ function burn.load(self)
 end
 
 function burn.draw(self)
+    local r = -math.pi/4
     for k,psystem in pairs(self.psystems) do
-        love.graphics.draw(psystem.psystem, psystem.x-world_x, psystem.y-world_y, 0, 0.1)
+        local x, y = worldToScreen(psystem.x, psystem.y)
+        love.graphics.draw(psystem.psystem, x, y, 0, 0.1)
     end
 end
 

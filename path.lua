@@ -38,7 +38,8 @@ end
 function Path:draw()
   if #self.points >= 4 then
     love.graphics.push()
-    love.graphics.translate(-world_x, -world_y)
+    love.graphics.translate(-screen_offset_x, -screen_offset_y)
+    love.graphics.rotate(-math.pi/4)
     love.graphics.setLineWidth(self.radius * 2)
     love.graphics.line(self.points)
     love.graphics.pop()

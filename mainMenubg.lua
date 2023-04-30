@@ -6,5 +6,5 @@ function bg.load(self)
 function bg.draw(self)
     --local r = -math.pi/4
     local r = 0
-    love.graphics.draw(self.image, -world_x, -world_y, r)
+    love.graphics.draw(self.image, -screen_offset_x, -screen_offset_y, r)
 end

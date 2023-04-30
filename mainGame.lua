@@ -11,9 +11,9 @@ window_h = 960
 speed = 100
 people_count = 300
 people_radius = 16
--- world coordinate of the upper left corner
-world_x = 0
-world_y = 0
+-- Screen offset
+screen_offset_x = 0
+screen_offset_y = 0
 
 endButton_x = 1100
 endtButton_y = -800
@@ -21,33 +21,13 @@ scaleButton_X = 150
 scaleButton_Y = 125
 startButton_R = 0
 
-function rect(x, y, w, h)
-    return {x=x, y=y, w=w, h=h}
-end
-
-function normalize(x, y)
-    l = math.sqrt(x*x+y*y)
-    return x/l, y/l
-end
-
-function world_to_screen(x, y)
-    return x-world_x, y-world_y
-end
-
-function clamp(x, min, max)
-    return math.max(math.min(x, max), min)
-end
-
+hero_speed = 400
 
 isDown = love.keyboard.isDown
 
 hero = {}
 people = {}
 mainGame = {}
-
-function angleFromDir(x, y)
-    return math.pi*2 + math.atan2(y, x)
-end
 
 
 eButton  = {
@@ -65,11 +45,10 @@ function mainGame.load()
     evil:load()
     burn:load()
     load_body()
-    love.window.setMode(window_w, window_h)
     love.physics.setMeter(32)
     world = love.physics.newWorld(0, 0, true)
     
-    local start_x = window_w/2
+    local start_x = math.sqrt(2)*math.max(window_w, window_h)*0.5
     local start_y = bg.ground:getHeight()/2
     hero = body(start_x, start_y, "static", people_radius, "fill")
     hero.path = Path:new()
@@ -91,7 +70,7 @@ function mainGame.mousepressed(mx, my, endButton)
 end
 
 function mainGame.draw()
-    bg:draw(world_x, world_y)
+    bg:draw(screen_offset_x, screen_offset_y)
     buttonEnd:draw(endButton_x,endButton_y,scaleButton_X,scaleButton_Y)
     hero:draw()
     if debug then hero.path:draw() end
@@ -99,8 +78,8 @@ function mainGame.draw()
         p:draw()
     end
     burn:draw()
-    evil:draw(world_x, world_y)
-    bg:draw_overlay(world_x, world_y)
+    evil:draw(screen_offset_x, screen_offset_y)
+    bg:draw_overlay(screen_offset_x, screen_offset_y)
 end
 
 function mainGame.update(dt)
@@ -116,30 +95,34 @@ function mainGame.update(dt)
     local hero_dir_x = 0
     local hero_dir_y = 0
 
-    function move_hero(x, y, angle)
+    function move_hero(x, y)
         hero_dir_x = hero_dir_x+x
         hero_dir_y = hero_dir_y+y
         walk = true
     end
 
-    local hero_speed = 400*dt
     if isDown("right") then
-        move_hero(hero_speed, 0, 0)
+        move_hero(1, 1)
     end
     if isDown("left") then
-        move_hero(-hero_speed, 0, math.pi)
+        move_hero(-1, -1)
     end
     if isDown("up") then
-        move_hero(0, -hero_speed, math.pi*3/2)
+        move_hero(1, -1)
     end
     if isDown("down") then
-        move_hero(0, hero_speed, math.pi/2)
+        move_hero(-1, 1)
     end
+
+    hero_dir_x, hero_dir_y = normalize(hero_dir_x, hero_dir_y)
+    hero_dir_x, hero_dir_y = mul(hero_dir_x, hero_dir_y, hero_speed*dt, hero_speed*dt)
 
     -- Update the hero position
     local diameter = hero.shape:getRadius()*2
     hero_x = clamp(hero_x+hero_dir_x, 0, bg.ground:getWidth()-diameter)
     hero_y = clamp(hero_y+hero_dir_y, 0, bg.ground:getHeight()-diameter)
+    hero_x = hero_x+hero_dir_x
+    hero_y = hero_y+hero_dir_y
     hero:setPosition(hero_x, hero_y)
     if walk then
         hero:walk()
@@ -147,8 +130,32 @@ function mainGame.update(dt)
     hero:setAngle(angleFromDir(hero_dir_x, hero_dir_y))
 
     -- Update the view position
-    world_x = clamp(hero_x - window_w/2, 0, bg.ground:getWidth()-window_w)
-    world_y = clamp(hero_y - window_h/2, 0, bg.ground:getHeight()-window_h)
+    sx, sy = worldToScreen(hero_x, hero_y)
+    screen_offset_x = screen_offset_x + sx - window_w/2
+    screen_offset_y = screen_offset_y + sy - window_h/2
+
+    function clampScreen(x, y)
+        local wx, wy = screenToWorld(x, y)
+        if wx < 0 then
+            wx = 0
+        end
+        if wy < 0 then
+            wy = 0
+        end
+        if wx > bg.ground:getWidth() then
+            wx = bg.ground:getWidth()
+        end
+        if wy > bg.ground:getHeight() then
+            wy = bg.ground:getHeight()
+        end
+        local sx, sy = worldToScreen(wx, wy)
+        screen_offset_x = screen_offset_x + sx - x
+        screen_offset_y = screen_offset_y + sy - y
+    end
+    clampScreen(0, 0)
+    clampScreen(window_w, 0)
+    clampScreen(window_w, window_h)
+    clampScreen(0, window_h)
 
     hero:update(dt)
     local lpx, lpy = hero.path:getLastPoint()

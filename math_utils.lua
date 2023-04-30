@@ -9,8 +9,9 @@ function magnitude(x, y)
 end
 
 function normalize(x, y)
-  local l = magnitude(x, y)
-  return x/l, y/l
+    l = math.sqrt(x*x+y*y)
+    if l == 0 then return 0, 0 end
+    return x/l, y/l
 end
 
 function dot(ax, ay, bx, by)
@@ -52,7 +53,37 @@ function limitMagnitude(x, y, m)
   return x, y
 end
 
+function rect(x, y, w, h)
+    return {x=x, y=y, w=w, h=h}
+end
+
+function rotate(x, y, a)
+    return
+      x*math.cos(a) - y*math.sin(a),
+      x*math.sin(a) + y*math.cos(a)
+end
+
+function worldToScreen(x, y)
+  x, y = rotate(x, y, -math.pi/4)
+  return x-screen_offset_x, y-screen_offset_y
+end
+
+function screenToWorld(x, y)
+  return rotate(x+screen_offset_x, y+screen_offset_y, math.pi/4)
+end
+
+function clamp(x, min, max)
+    return math.max(math.min(x, max), min)
+end
+
 function angleFromDir(x, y)
     return math.pi*2 + math.atan2(y, x)
 end
 
+function add(x1, y1, x2, y2)
+  return x1+x2, y1+y2
+end
+
+function mul(x1, y1, x2, y2)
+  return x1*x2, y1*y2
+end
