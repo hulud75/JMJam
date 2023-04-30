@@ -11,6 +11,7 @@ function body(x, y, physic_mode, radius, render_mode, sprites, shaman)
         maxSpeed = 900, maxForce = 40,
         ax = 0, ay = 0,
         sprites = sprites,
+        inLava = false,
         teleporting = 0,
         shaman = shaman
     }
@@ -25,7 +26,7 @@ function body(x, y, physic_mode, radius, render_mode, sprites, shaman)
             local radius = self.shape:getRadius()
             love.graphics.setColor(1-self.teleporting, 1-self.heat+self.teleporting, 1-self.heat-self.teleporting)
 
-            self.sprites:draw((x + radius) - self.sprites.w/2, (y + radius) - self.sprites.h/2, self.animation, self.angle)
+            self.sprites:draw((x + radius) - self.sprites.w/2, (y + radius) - self.sprites.h/2, self.animation, self.angle, self.inLava)
 
             love.graphics.setColor(1, 1, 1)
         end
@@ -72,6 +73,7 @@ function body(x, y, physic_mode, radius, render_mode, sprites, shaman)
     function result.update(self, dt)
         x, y = self:getPosition()
 
+        self.inLava = bg:isLava(x, y)
         -- Heating
         local heating_speed = evil:heat(x, y) + bg:heat(x, y)
         if heating_speed > 0 then
