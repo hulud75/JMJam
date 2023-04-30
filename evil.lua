@@ -2,8 +2,7 @@ evil = {}
 
 function evil.load(self)
     evil.image = love.graphics.newImage("evil_smoke.png")
-    evil.x = -evil.image:getWidth()
-    evil.speed = 100
+    evil.speed = 500
 end
 
 function evil.draw(self)
@@ -16,6 +15,10 @@ function evil.update(self, dt)
     self.x = self.x+dt*self.speed
 end
 
-function evil.die(self, x, y)
-    return x < self.x+self.image:getWidth()
+function evil.heat(self, x, y)
+    return x < self.x+self.image:getWidth() and 1 or 0
+end
+
+function evil.restart(self)
+    evil.x = -evil.image:getWidth()
 end

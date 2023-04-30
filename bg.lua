@@ -64,10 +64,10 @@ function bg.draw_overlay(self)
     love.graphics.setBlendMode("alpha")
 end
 
-function bg.die(self, x, y)
+function bg.heat(self, x, y)
     if (x >= 0 and x < self.w and y >= 0 and y < self.h) then
         r, g, b, a = bg.groundData:getPixel(x, y)
-        return a < 0.5
+        return a < 0.5 and 0.4 or 0
     end
-    return false
+    return 0
 end

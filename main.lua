@@ -47,6 +47,7 @@ function love.load()
     else
         love.window.setMode(window_w, window_h)
     end
+    mainGame:restart()
 end
 
 function love.mousepressed(mx, my, startButton)
@@ -72,6 +73,12 @@ function love.update(dt)
     end
 end
 
+function love.keypressed( key, scancode, isrepeat )
+    if page == "menu" then
+    else
+        mainGame:keypressed(key, scancode, isrepeat)
+    end
+end
 
 
 

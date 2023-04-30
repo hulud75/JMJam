@@ -26,8 +26,6 @@ hero_speed = 400
 
 isDown = love.keyboard.isDown
 
-hero = {}
-people = {}
 mainGame = {}
 
 
@@ -46,30 +44,41 @@ function mainGame.load()
     evil:load()
     burn:load()
     love.physics.setMeter(32)
-    world = love.physics.newWorld(0, 0, true)
 
-    local shaman_sprites = load_sprites("shamanSheet_01.png")
-    local peon_sprites = load_sprites("peonPossessedSheet_01.png")
+    shaman_sprites = load_sprites("shamanSheet_01.png")
+    peon_sprites = load_sprites("peonPossessedSheet_01.png")
+    game_over_image = love.graphics.newImage("shamanSheet_01.png")
     
+end
+
+function mainGame.restart(self)
+    world = love.physics.newWorld(0, 0, true)
+    evil:restart()
     local start_x = math.sqrt(2)*math.max(window_w, window_h)*0.5
     local start_y = bg.ground:getHeight()/2
     hero = body(start_x, start_y, "static", people_radius, "fill", shaman_sprites)
     hero.path = Path:new()
     hero.path:addPoint(start_x, start_y)
 
+    people = {}
     for i=1,people_count do
         local x = math.random(0, bg.ground:getWidth())
         local y = math.random(0, bg.ground:getHeight())
         local p = body(x, y, "dynamic", people_radius, "line", peon_sprites)
         people[p] = true
     end
+    game_over_time = nil
+    game_over = false
 end
 
-function mainGame.mousepressed(mx, my, endButton)
-    if endButton == 1 and mx >= eButton.x and mx < eButton.x+eButton.width and my >= eButton.y and my < eButton.y+eButton.height then
-        print("Return to main page!")
-        --page = "Game"
+function mainGame.testRestart(self)
+    if game_over then
+        self:restart()
     end
+end
+
+function mainGame.keypressed(self, key, scancode, isrepeat )
+    self:testRestart()
 end
 
 function mainGame.draw()
@@ -83,6 +92,24 @@ function mainGame.draw()
     burn:draw()
     evil:draw(screen_offset_x, screen_offset_y)
     bg:draw_overlay(screen_offset_x, screen_offset_y)
+
+    if not hero.alive then        
+        local fade_time = 5
+        local wait_time = 2
+        local time = love.timer.getTime()
+        if not game_over_time then
+            game_over_time = time
+        end
+        if time > game_over_time+wait_time then
+            game_over = true
+            alpha = math.max(0, (time - wait_time - game_over_time) / fade_time)
+            love.graphics.setColor(0,0,0,alpha)
+            love.graphics.rectangle("fill", 0, 0, window_w, window_h)
+            love.graphics.setColor(1,1,1,1)
+            scale = math.max(window_w / game_over_image:getWidth(), window_h / game_over_image:getHeight())
+            love.graphics.draw(game_over_image, 0, 0, 0, scale)
+        end
+    end
 end
 
 function mainGame.update(dt)
@@ -104,17 +131,19 @@ function mainGame.update(dt)
         walk = true
     end
 
-    if isDown("right") then
-        move_hero(1, 1)
-    end
-    if isDown("left") then
-        move_hero(-1, -1)
-    end
-    if isDown("up") then
-        move_hero(1, -1)
-    end
-    if isDown("down") then
-        move_hero(-1, 1)
+    if hero.alive then
+        if isDown("right") then
+            move_hero(1, 1)
+        end
+        if isDown("left") then
+            move_hero(-1, -1)
+        end
+        if isDown("up") then
+            move_hero(1, -1)
+        end
+        if isDown("down") then
+            move_hero(-1, 1)
+        end
     end
 
     hero_dir_x, hero_dir_y = normalize(hero_dir_x, hero_dir_y)

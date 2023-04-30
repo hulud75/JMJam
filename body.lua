@@ -14,15 +14,18 @@ function body(x, y, physic_mode, radius, render_mode, sprites)
     result.body = love.physics.newBody(world, x, y, physic_mode)
     result.shape = love.physics.newCircleShape(radius)
     result.fixture = love.physics.newFixture(result.body, result.shape, 1)
+    result.body:setLinearVelocity(0, 0)
 
     function result.draw(self)
-        local x, y = worldToScreen(self.body:getPosition())
-        local radius = self.shape:getRadius()
-        love.graphics.setColor(1, 1-self.heat, 1-self.heat)
+        if self.alive then
+            local x, y = worldToScreen(self.body:getPosition())
+            local radius = self.shape:getRadius()
+            love.graphics.setColor(1, 1-self.heat, 1-self.heat)
 
-        self.sprites:draw((x + radius) - self.sprites.w/2, (y + radius) - self.sprites.h/2, self.animation, self.angle)
+            self.sprites:draw((x + radius) - self.sprites.w/2, (y + radius) - self.sprites.h/2, self.animation, self.angle)
 
-        love.graphics.setColor(1, 1, 1)
+            love.graphics.setColor(1, 1, 1)
+        end
     end
 
     function result.getPosition(self)
@@ -52,11 +55,12 @@ function body(x, y, physic_mode, radius, render_mode, sprites)
 
     function result.update(self, dt)
         x, y = self:getPosition()
-        local heating_speed = 0.4
-        if evil:die(x, y) or bg:die(x, y) then
+        local heating_speed = evil:heat(x, y) + bg:heat(x, y)
+        if heating_speed > 0 then
             self.heat = self.heat+dt*heating_speed
         else
-            self.heat = math.max(0.0, self.heat-dt*heating_speed)
+            local cool_speed = 0.4
+            self.heat = math.max(0.0, self.heat-dt*cool_speed)
         end
         if self.heat > 1 then
             self:die()

@@ -1,7 +1,7 @@
-Path = {points = {}, radius = 50}
+Path = {}
 
-function Path:new(o)
-  local p = o or {}
+function Path:new()
+  local p = {points = {}, radius = 50}
   setmetatable(p, self)
   self.__index = self
   return p
