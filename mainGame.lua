@@ -49,12 +49,12 @@ function mainGame.load()
     shaman_sprites = load_sprites("shamanSheet_01.png")
     peon_sprites = load_sprites("peonPossessedSheet_01.png")
     game_over_image = love.graphics.newImage("gameOver.png")
+    youWin_image = love.graphics.newImage("youWin.png")
     
 end
 
 function mainGame.restart(self)
     score_saved = 0
-    score_killed = 0
     world = love.physics.newWorld(0, 0, true)
     evil:restart()
     local start_x = math.sqrt(2)*math.max(window_w, window_h)*0.5
@@ -112,7 +112,11 @@ function mainGame.draw()
             scale = math.min(window_w / game_over_image:getWidth(), window_h / game_over_image:getHeight())
             x = (window_w-game_over_image:getWidth()*scale)/2
             y = (window_h-game_over_image:getHeight()*scale)/2
-            love.graphics.draw(game_over_image, x, y, 0, scale)
+            if hero.saved then
+                love.graphics.draw(youWin_image, x, y, 0, scale)
+            else
+                love.graphics.draw(game_over_image, x, y, 0, scale)
+            end
         end
     end
 end

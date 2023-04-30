@@ -4,6 +4,7 @@ function body(x, y, physic_mode, radius, render_mode, sprites, shaman)
     local result = {
         render_mode = render_mode,
         alive = true,
+        saved = false,
         animation = math.random(0, sprites.animation_steps),
         angle = 0,
         heat = 0,
@@ -47,7 +48,11 @@ function body(x, y, physic_mode, radius, render_mode, sprites, shaman)
         end
     end
 
-    function result.saved(self)
+    function result.save(self)
+        self.saved = true
+        if not self.shaman then
+            score_saved = score_saved+1
+        end
         if self.alive then
             self.alive = false
             x, y = self.body:getPosition()
@@ -80,11 +85,11 @@ function body(x, y, physic_mode, radius, render_mode, sprites, shaman)
         end
 
         -- Goal
-        if bg:isGoal(x, y) and (not self.shaman or #people > 0) then
-            self.teleporting = self.teleporting + dt*1
+        if bg:isGoal(x, y) and (not self.shaman or x < evil.x) then
+            self.teleporting = self.teleporting + dt*(self.shaman and 100000 or 1)
         end
         if self.teleporting > 1 then
-            self:saved()
+            self:save()
         end
     end
 
