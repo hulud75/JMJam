@@ -7,7 +7,7 @@ function load_body()
     sprite_animation_steps = 8
     sprite_dir_steps = 8
     body_sprites_imageData = love.image.newImageData("sprites.png")
-    local remap_dir = {0, 5, 4, 6, 7, 3, 1, 2}
+    local remap_dir = {1, 0, 7, 6, 5, 4, 3, 2}
     body_sprites_image = love.graphics.newImage(body_sprites_imageData)
     body_sprite_w = body_sprites_imageData:getWidth() / sprite_animation_steps
     body_sprite_h = body_sprites_imageData:getHeight() / sprite_dir_steps
@@ -22,7 +22,7 @@ function load_body()
 end
 
 function body(x, y, physic_mode, radius, render_mode)
-    local result = { render_mode = render_mode, alive = true, animation = math.random(0, sprite_animation_steps), angle = 0 }
+    local result = { render_mode = render_mode, alive = true, animation = math.random(0, sprite_animation_steps), angle = 0, heat = 0 }
     result.body = love.physics.newBody(world, x, y, physic_mode)
     result.shape = love.physics.newCircleShape(radius)
     result.fixture = love.physics.newFixture(result.body, result.shape, 1)
@@ -30,11 +30,7 @@ function body(x, y, physic_mode, radius, render_mode)
     function result.draw(self)
         local x, y = self.body:getPosition()
         local radius = self.shape:getRadius()
-        if self.alive then
-            love.graphics.setColor(1, 1, 1)
-        else
-            love.graphics.setColor(1, 0, 0)
-        end
+        love.graphics.setColor(1, 1-self.heat, 1-self.heat)
 
         local anim_frame = math.floor(math.mod(self.animation, sprite_animation_steps))+1
         local dir = math.floor(math.mod(self.angle * sprite_dir_steps / (2.0*math.pi) + 0.5, sprite_dir_steps))+1
@@ -56,6 +52,7 @@ function body(x, y, physic_mode, radius, render_mode)
             self.alive = false
             x, y = self.body:getPosition()
             burn:create(x, y)
+            people[self] = nil
         end
     end
 
@@ -69,7 +66,13 @@ function body(x, y, physic_mode, radius, render_mode)
 
     function result.update(self, dt)
         x, y = self:getPosition()
+        local heating_speed = 0.4
         if evil:die(x, y) or bg:die(x, y) then
+            self.heat = self.heat+dt*heating_speed
+        else
+            self.heat = math.max(0.0, self.heat-dt*heating_speed)
+        end
+        if self.heat > 1 then
             self:die()
         end
     end
@@ -85,7 +88,7 @@ function body(x, y, physic_mode, radius, render_mode)
         local centeringFactor = 0.005
         local avoidFactor = 0.5
         local matchingFactor = 0.5
-        local maxSpeed = 200
+        local maxSpeed = 400
 
         -- accumulators
         local xPosAvg, yPosAvg = 0, 0

@@ -2,6 +2,7 @@ burn = { psystems = {} }
 
 function burn.load(self)
     particle_img = love.graphics.newImage('particle.png')
+    burn_sound = love.audio.newSource("EXPLODE.wav", "static")
 end
 
 function burn.draw(self)
@@ -31,4 +32,5 @@ function burn.create(self, x, y)
     psystem:setColors(255, 255, 0, 255, 128, 0, 0, 255, 0, 0, 0, 0) -- Fade to black.    
     table.insert(self.psystems, { psystem = psystem, x = x, y = y } )
     psystem:emit(32)
+    burn_sound:play()
 end

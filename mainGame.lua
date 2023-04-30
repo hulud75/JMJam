@@ -79,7 +79,7 @@ function mainGame.load()
         local x = math.random(0, bg.ground:getWidth())
         local y = math.random(0, bg.ground:getHeight())
         local p = body(x, y, "dynamic", people_radius, "line")
-        table.insert(people, p)
+        people[p] = true
     end
 end
 
@@ -95,7 +95,7 @@ function mainGame.draw()
     buttonEnd:draw(endButton_x,endButton_y,scaleButton_X,scaleButton_Y)
     hero:draw()
     if debug then hero.path:draw() end
-    for k,p in pairs(people) do
+    for p,k in pairs(people) do
         p:draw()
     end
     burn:draw()
@@ -157,7 +157,7 @@ function mainGame.update(dt)
         hero.path:addPoint(hero_x, hero_y)
     end
 
-    for k,p in pairs(people) do
+    for p,v in pairs(people) do
         p:walk()
         p:update(dt)
         x, y = p:getPosition()
