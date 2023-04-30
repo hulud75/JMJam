@@ -48,7 +48,10 @@ function body(x, y, physic_mode, radius, render_mode, sprites, sprites_idle, sha
         if self.alive then
             self.alive = false
             x, y = self.body:getPosition()
-            burn:create(x, y, true)
+            sx, sx = worldToScreen(x,y)
+            if sx > 0 and sx < window_w and sy > 0 and sy < window_h then
+                burn:create(x, y, true)
+            end
             people[self] = nil
         end
     end

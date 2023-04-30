@@ -7,7 +7,7 @@ goal_radius_sq = 600*600
 function bg.load(self)
     bg.lava = love.graphics.newImage("lava_0000.png")
     bg.lava:setWrap("repeat", "repeat")
-    bg.groundData = love.image.newImageData("ground_04.png")
+    bg.groundData = love.image.newImageData("ground_05.png")
     bg.ground = love.graphics.newImage(bg.groundData)
     bg.lava_heat = love.graphics.newImage("lava_heat.png")
     bg.w = bg.ground:getWidth()
