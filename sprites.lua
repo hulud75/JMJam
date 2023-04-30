@@ -4,7 +4,7 @@ function load_sprites(filename)
     self.animation_steps = 7
     self.dir_steps = 8
     local imageData = love.image.newImageData(filename)
-    local remap_dir = {2, 1, 0, 7, 6, 5, 4, 3}
+    local remap_dir = {1, 0, 7, 6, 5, 4, 3, 2}
     self.image = love.graphics.newImage(imageData)
     self.w = imageData:getWidth() / self.animation_steps
     self.h = imageData:getHeight() / self.dir_steps
