@@ -65,8 +65,11 @@ function mainGame.restart(self)
 
     people = {}
     for i=1,people_count do
-        local x = math.random(0, bg.ground:getWidth())
-        local y = math.random(0, bg.ground:getHeight())
+        local x, y = 0, 0
+        repeat
+            x = math.random(0, bg.ground:getWidth())
+            y = math.random(0, bg.ground:getHeight())
+        until not bg:isLava(x, y)
         local p = body(x, y, "dynamic", people_radius, "line", peon_sprites, false)
         people[p] = true
     end
@@ -208,12 +211,7 @@ function mainGame.update(dt)
     for p,v in pairs(people) do
         p:walk()
         p:update(dt)
-        -- x, y = p:getPosition()
-        -- dx, dy = normalize(hero_x-x, hero_y-y)
-        -- p:setAngle(angleFromDir(dx, dy))
-        -- p:updateVelocity(k)
         p:followPath(hero.path)
-        -- p:seek(hero_x, hero_y)
         p:updateAcceleration()
     end
 end
