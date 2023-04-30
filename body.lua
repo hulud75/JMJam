@@ -98,6 +98,7 @@ function body(x, y, physic_mode, radius, render_mode, sprites, shaman)
         local vx, vy = self.body:getLinearVelocity()
         local dx, dy = normalize(tx - px , ty - py)
         dx, dy = dx * self.maxSpeed, dy * self.maxSpeed
+        if bg:isLava(px, py) then dx, dy = dx / 2, dy / 2 end
         local steerX, steerY = limitMagnitude(dx - vx, dy - vy, self.maxForce)
         self:applyForce(steerX, steerY)
     end
@@ -139,76 +140,6 @@ function body(x, y, physic_mode, radius, render_mode, sprites, shaman)
         local dx, dy = normalize(nvx, nvy)
         self.angle = angleFromDir(dx, dy)
         self.ax, self.ay = 0, 0
-    end
-
-    function result.updateVelocity(self, id)
-        local px, py = self.body:getPosition()
-        local vx, vy = self.body:getLinearVelocity()
-
-        -- constants
-        local heroAuraRange = 300
-        local visualRange = 100
-        local protectedRange = 30
-        local centeringFactor = 0.005
-        local avoidFactor = 0.5
-        local matchingFactor = 0.5
-        local maxSpeed = 400
-
-        -- accumulators
-        local xPosAvg, yPosAvg = 0, 0
-        local xVelAvg, yVelAvg = 0, 0
-        local neighbors = 0
-        local closeDx, closeDy = 0, 0
-
-        for i, p in ipairs(people) do
-            if i ~= id then
-                local opx, opy = p.body:getPosition()
-                local ovx, ovy = p.body:getLinearVelocity()
-                local dx = px - opx
-                local dy = py - opy
-
-                if math.abs(dx) < visualRange and math.abs(dy) < visualRange then
-                    local squaredDistance = dx*dx + dy*dy
-                    if squaredDistance < protectedRange*protectedRange then
-                        closeDx = closeDx + px - opx
-                        closeDy = closeDy + py - opy
-                    elseif squaredDistance < visualRange*visualRange then
-                        xPosAvg = xPosAvg + opx
-                        yPosAvg = yPosAvg + opy
-                        xVelAvg = xVelAvg + ovx
-                        yVelAvg = yVelAvg + ovy
-                        neighbors = neighbors + 1
-                    end
-                end
-            end
-        end
-
-        if neighbors > 0 then
-            xPosAvg = xPosAvg / neighbors
-            yPosAvg = yPosAvg / neighbors
-            xVelAvg = xVelAvg / neighbors
-            yVelAvg = yVelAvg / neighbors
-
-            vx = vx + (xPosAvg-px) * centeringFactor + (xVelAvg - vx) * matchingFactor
-            vy = vy + (yPosAvg-py) * centeringFactor + (yVelAvg - vy) * matchingFactor
-        end
-
-        if hero_x-x < heroAuraRange and hero_y-y < heroAuraRange then
-            local dhx, dhy = normalize(hero_x - x, hero_y - y)
-            vx = vx + dhx * 10
-            vy = vy + dhy * 10
-        end
-
-        vx = vx + closeDx * avoidFactor
-        vy = vy + closeDy * avoidFactor
-
-        local speed = math.sqrt(vx*vx + vy*vy)
-        if speed > maxSpeed then
-            vx = vx/speed*maxSpeed
-            vy = vy/speed*maxSpeed
-        end
-
-        self.body:setLinearVelocity(vx, vy)
     end
 
     return result
