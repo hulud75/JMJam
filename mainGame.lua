@@ -40,6 +40,7 @@ function mainGame.load()
     peon_sprites = load_sprites("peonPossessedSheet_01.png")
     game_over_image = love.graphics.newImage("gameOver.png")
     youWin_image = love.graphics.newImage("youWin.png")
+    vignette = love.graphics.newImage("vignette.png")
 
     music = love.audio.newSource( "A1-0001_testZic01.mp3", "stream" )
 end
@@ -104,9 +105,9 @@ function mainGame.draw()
             love.graphics.setColor(0,0,0,alpha)
             love.graphics.rectangle("fill", 0, 0, window_w, window_h)
             love.graphics.setColor(1,1,1,1)
-            scale = math.min(window_w / game_over_image:getWidth(), window_h / game_over_image:getHeight())
-            x = (window_w-game_over_image:getWidth()*scale)/2
-            y = (window_h-game_over_image:getHeight()*scale)/2
+            local scale = math.min(window_w / game_over_image:getWidth(), window_h / game_over_image:getHeight())
+            local x = (window_w-game_over_image:getWidth()*scale)/2
+            local y = (window_h-game_over_image:getHeight()*scale)/2
             if hero.saved then
                 love.graphics.draw(youWin_image, x, y, 0, scale)
                 mainScoreTxt:draw(mainScoreTxt_x,mainScoreTxt_y,mainScoreTxt_sx,mainScoreTxt_sy)
@@ -115,6 +116,11 @@ function mainGame.draw()
             end
         end
     end
+
+    local scale = math.min(window_w / vignette:getWidth(), window_h / vignette:getHeight())
+    local x = (window_w-game_over_image:getWidth()*scale)/2
+    local y = (window_h-game_over_image:getHeight()*scale)/2
+    love.graphics.draw(vignette, x, y, 0, scale)
 end
 
 function mainGame.update(dt)
