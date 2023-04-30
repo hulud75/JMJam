@@ -22,5 +22,9 @@ Entrer dans le répertoire du jeu:
 Lancer le jeu:
 `love .`
 
+## Distribution
 
-
+Pour créer un archive prête à être distribuée pour windows, utilisez le script powershell build.ps1
+Il prend 2 arguments optionnels:
+- le nom du jeu
+- le chemin vers l'exe Love (on essaie de le trouver automatiquement sinon)
