@@ -7,7 +7,7 @@ function body(x, y, physic_mode, radius, render_mode, sprites)
         animation = math.random(0, sprites.animation_steps),
         angle = 0,
         heat = 0,
-        maxSpeed = 700, maxForce = 20,
+        maxSpeed = 900, maxForce = 40,
         ax = 0, ay = 0,
         sprites = sprites
     }
@@ -84,6 +84,7 @@ function body(x, y, physic_mode, radius, render_mode, sprites)
     function result.followPath(self, path)
         local PREDICTOR_LENGTH = 25
         local TARGET_LENGTH = 100
+        local ATTRACT_RANGE = 400
         local px, py = self.body:getPosition()
         local vx, vy = self.body:getLinearVelocity()
         if vx == 0 or vy == 0 then vx, vy = 0.01, 0.01 end
@@ -104,7 +105,7 @@ function body(x, y, physic_mode, radius, render_mode, sprites)
             end
         end
 
-        if targetX ~= nil and bestDistance > path.radius then
+        if targetX ~= nil and bestDistance > path.radius and bestDistance < ATTRACT_RANGE then
             self:seek(targetX, targetY)
         end
     end
