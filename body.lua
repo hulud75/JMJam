@@ -83,7 +83,7 @@ function body(x, y, physic_mode, radius, render_mode, sprites)
 
     function result.followPath(self, path)
         local PREDICTOR_LENGTH = 25
-        local TARGET_LENGTH = 100
+        local TARGET_LENGTH = 200
         local ATTRACT_RANGE = 400
         local px, py = self.body:getPosition()
         local vx, vy = self.body:getLinearVelocity()
