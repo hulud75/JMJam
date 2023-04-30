@@ -3,6 +3,7 @@ burn = { psystems = {} }
 function burn.load(self)
     particle_img = love.graphics.newImage('particle.png')
     burn_sound = love.audio.newSource("EXPLODE.wav", "static")
+    teleport_sound = love.audio.newSource("teleportationFast.mp3", "static")
 end
 
 function burn.draw(self)
@@ -33,10 +34,11 @@ function burn.create(self, x, y, burn)
     psystem:setEmissionArea("uniform", 50, 50)
     if burn then
         psystem:setColors(255, 255, 0, 255, 128, 0, 0, 255, 0, 0, 0, 0) -- Fade to black.    
+        burn_sound:play()
     else
-        psystem:setColors(255, 255, 255, 255, 0, 255, 0, 255, 0, 255, 0, 0) -- Fade to black.    
+        psystem:setColors(255, 255, 255, 255, 0, 255, 0, 255, 0, 255, 0, 0) -- Fade to black.
+        teleport_sound:play()
     end
     table.insert(self.psystems, { psystem = psystem, x = x, y = y } )
     psystem:emit(32)
-    burn_sound:play()
 end

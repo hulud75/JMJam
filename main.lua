@@ -1,3 +1,5 @@
+math.randomseed(os.time())
+
 require("mainMenu_bg")
 require("buttonStart")
 require("mainGame")

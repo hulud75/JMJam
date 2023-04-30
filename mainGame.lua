@@ -44,7 +44,9 @@ function mainGame.load()
     vignette = love.graphics.newImage("vignette.png")
 
     music = love.audio.newSource( "A1-0001_testZic01.mp3", "stream" )
-    gogogo = love.audio.newSource( "gogogo.mp3", "static" )
+    gogogo = love.audio.newSource( "gogogo.mp3", "stream" )
+    youLoose = love.audio.newSource( "youLoose.mp3", "stream" )
+    youWin = love.audio.newSource( "youWin.mp3", "stream" )
 end
 
 function mainGame.restart(self)
@@ -102,7 +104,14 @@ function mainGame.draw()
             game_over_time = time
         end
         if time > game_over_time+wait_time then
-            music:stop()
+            if not game_over then
+                music:stop()
+                if hero.saved then 
+                    youWin:play()
+                else
+                    youLoose:play()
+                end
+            end
             game_over = true
             alpha = math.max(0, (time - wait_time - game_over_time) / fade_time)
             love.graphics.setColor(0,0,0,alpha)
