@@ -44,10 +44,12 @@ function mainGame.load()
     vignette = love.graphics.newImage("vignette.png")
 
     music = love.audio.newSource( "A1-0001_testZic01.mp3", "stream" )
+    gogogo = love.audio.newSource( "gogogo.mp3", "static" )
 end
 
 function mainGame.restart(self)
     love.audio.play( music )
+    gogogo:play()
     score_saved = 0
     world = love.physics.newWorld(0, 0, true)
     evil:restart()
