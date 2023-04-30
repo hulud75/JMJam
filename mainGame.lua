@@ -153,17 +153,19 @@ function mainGame.update(dt)
     hero:update(dt)
     local lpx, lpy = hero.path:getLastPoint()
     if distance(hero_x, hero_y, lpx, lpy) > 100 then
-        print("putting down a point")
         hero.path:addPoint(hero_x, hero_y)
     end
 
     for p,v in pairs(people) do
         p:walk()
         p:update(dt)
-        x, y = p:getPosition()
-        dx, dy = normalize(hero_x-x, hero_y-y)
-        p:setAngle(angleFromDir(dx, dy))
-        p:updateVelocity(k)
+        -- x, y = p:getPosition()
+        -- dx, dy = normalize(hero_x-x, hero_y-y)
+        -- p:setAngle(angleFromDir(dx, dy))
+        -- p:updateVelocity(k)
+        p:followPath(hero.path)
+        -- p:seek(hero_x, hero_y)
+        p:updateAcceleration()
     end
 end
 

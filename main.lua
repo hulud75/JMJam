@@ -30,11 +30,6 @@ function rect(x, y, w, h)
     return {x=x, y=y, w=w, h=h}
 end
 
-function normalize(x, y)
-    l = math.sqrt(x*x+y*y)
-    return x/l, y/l
-end
-
 function world_to_screen(x, y)
     return x-world_x, y-world_y
 end
@@ -52,6 +47,7 @@ sButton  = {
     width  = scaleButton_X,
     height = scaleButton_Y,
 }
+people = {}
 
 function love.load()
     mainMenu_bg:load()

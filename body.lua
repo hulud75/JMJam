@@ -1,7 +1,4 @@
-local function normalize(x, y)
-    local l = math.sqrt(x*x+y*y)
-    return x/l, y/l
-end
+require("math_utils")
 
 function load_body()
     sprite_animation_steps = 7
@@ -22,7 +19,15 @@ function load_body()
 end
 
 function body(x, y, physic_mode, radius, render_mode)
-    local result = { render_mode = render_mode, alive = true, animation = math.random(0, sprite_animation_steps), angle = 0, heat = 0 }
+    local result = {
+        render_mode = render_mode,
+        alive = true,
+        animation = math.random(0, sprite_animation_steps),
+        angle = 0,
+        heat = 0,
+        maxSpeed = 300, maxForce = 10,
+        ax = 0, ay = 0
+    }
     result.body = love.physics.newBody(world, x, y, physic_mode)
     result.shape = love.physics.newCircleShape(radius)
     result.fixture = love.physics.newFixture(result.body, result.shape, 1)
@@ -75,6 +80,54 @@ function body(x, y, physic_mode, radius, render_mode)
         if self.heat > 1 then
             self:die()
         end
+    end
+
+    function result.applyForce(self, fx, fy)
+        self.ax = self.ax + fx
+        self.ay = self.ay + fy
+    end
+
+    function result.seek(self, tx, ty)
+        local px, py = self.body:getPosition()
+        local vx, vy = self.body:getLinearVelocity()
+        local dx, dy = normalize(tx - px , ty - py)
+        dx, dy = dx * self.maxSpeed, dy * self.maxSpeed
+        local steerX, steerY = limitMagnitude(dx - vx, dy - vy, self.maxForce)
+        self:applyForce(steerX, steerY)
+    end
+
+    function result.followPath(self, path)
+        local PREDICTOR_LENGTH = 25
+        local TARGET_LENGTH = 50
+        local px, py = self.body:getPosition()
+        local vx, vy = self.body:getLinearVelocity()
+        if vx == 0 or vy == 0 then vx, vy = 0.1, 0.1 end
+        local predictX, predictY = normalize(vx, vy)
+        predictX, predictY = predictX * PREDICTOR_LENGTH, predictY * PREDICTOR_LENGTH
+        local plx, ply = px + predictX, py + predictY
+
+        local startX, startY, endX, endY = path:getLastLine()
+        if not startX then return end
+        local npx, npy = projectOnLine(plx, ply, startX, startY, endX, endY)
+
+        local dirX, dirY = normalize(endX - startX, endY - startY)
+        dirX, dirY = dirX * TARGET_LENGTH, dirY * TARGET_LENGTH
+        local targetX, targetY = npx + dirX, npy + dirY
+
+        local distance = distance(npx, npy, plx, ply)
+        if distance > path.radius then
+            self:seek(targetX, targetY)
+        end
+    end
+
+    function result.updateAcceleration(self)
+        local vx, vy = self.body:getLinearVelocity()
+        local nvx, nvy = vx + self.ax, vy + self.ay
+        self.body:setLinearVelocity(nvx, nvy)
+        if nvx == 0 or nvy == 0 then nvx, nvy = 0.1, 0.1 end
+        local dx, dy = normalize(nvx, nvy)
+        self.angle = angleFromDir(dx, dy)
+        self.ax, self.ay = 0, 0
     end
 
     function result.updateVelocity(self, id)

@@ -1,4 +1,4 @@
-Path = {points = {}}
+Path = {points = {}, radius = 50}
 
 function Path:new(o)
   local p = o or {}
@@ -13,14 +13,24 @@ function Path:addPoint(px, py)
 end
 
 function Path:getLastPoint()
-  size = #self.points
-  return self.points[size - 1], self.points[size]
+  local size = #self.points
+  if size >= 2 then
+    return unpack(self.points, size - 1, size)
+  end
+end
+
+function Path:getLastLine()
+  local size = #self.points
+  if size >= 4 then
+  	return unpack(self.points, size - 3, size)
+  end
 end
 
 function Path:draw()
   if #self.points >= 4 then
     love.graphics.push()
     love.graphics.translate(-world_x, -world_y)
+    love.graphics.setLineWidth(self.radius * 2)
     love.graphics.line(self.points)
     love.graphics.pop()
   end
