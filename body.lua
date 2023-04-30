@@ -25,7 +25,7 @@ function body(x, y, physic_mode, radius, render_mode)
         animation = math.random(0, sprite_animation_steps),
         angle = 0,
         heat = 0,
-        maxSpeed = 500, maxForce = 20,
+        maxSpeed = 700, maxForce = 20,
         ax = 0, ay = 0
     }
     result.body = love.physics.newBody(world, x, y, physic_mode)
@@ -108,10 +108,7 @@ function body(x, y, physic_mode, radius, render_mode)
 
         local bestDistance = 9999999
         local targetX, targetY = nil, nil
-        local iter = path:getSegmentIterator()
-        while true do
-            local ax, ay, bx, by = iter()
-            if ax == nil then break end
+        for ax, ay, bx, by in path:getSegmentIterator() do
             local npx, npy = closestPointToPoint(plx, ply, ax, ay, bx, by, true)
             local distance = distance(npx, npy, plx, ply)
             if distance < bestDistance then
