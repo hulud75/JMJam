@@ -27,7 +27,7 @@ function evil.restart(self)
     evil.x = 0
     evil.psystem = love.graphics.newParticleSystem(evil.sprite, 4000)
     evil.psystem:setLinearAcceleration(-2000, 0)
-    evil.psystem:setColors(255, 255, 255, 0, 255, 255, 255, 255, 0, 0, 0, 0) -- Fade to black.    
+    evil.psystem:setColors(255, 255, 255, 0, 0, 0, 0, 255, 0, 0, 0, 0) -- Fade to black.    
     evil.psystem:setSizeVariation(1)
     evil.psystem:setSpinVariation(1)
     evil.psystem:setSpin(0, 20)

@@ -5,7 +5,7 @@ require("mainGame")
 release = true
 debug = false and not release
 full_screen = false or release
-page = "game" or (release and "menu")
+page = release and "menu" or "mainGame"
 window_w = 1280
 window_h = 960
 speed = 100
