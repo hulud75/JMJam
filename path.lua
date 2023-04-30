@@ -26,6 +26,15 @@ function Path:getLastLine()
   end
 end
 
+function Path:getSegmentIterator()
+  local i = -3
+  local size = #self.points
+  return function()
+    i = i + 4
+    if i + 4 <= size then return unpack(self.points, i, i + 4) end
+  end
+end
+
 function Path:draw()
   if #self.points >= 4 then
     love.graphics.push()

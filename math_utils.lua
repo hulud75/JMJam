@@ -26,6 +26,23 @@ function projectOnLine(px, py, ax, ay, bx, by)
   return ax + abx, ay + aby
 end
 
+function closestPointToPointParameter(px, py, ax, ay, bx, by, clampToLine)
+  local apx, apy = px - ax, py - ay
+  local abx, aby = bx - ax, by - ay
+  local abap = dot(abx, aby, apx, apy)
+  local abab = dot(abx, aby, abx, aby)
+  local t = abap / abab
+  if clampToLine then
+    t = clamp(t, 0, 1)
+  end
+  return t
+end
+
+function closestPointToPoint(px, py, ax, ay, bx, by, clampToLine)
+  local t = closestPointToPointParameter(px, py, ax, ay, bx, by, clampToLine)
+  return (bx - ax) * t + ax, (by - ay) * t + ay
+end
+
 function limitMagnitude(x, y, m)
   local l = magnitude(x, y)
   if l > m then

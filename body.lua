@@ -25,7 +25,7 @@ function body(x, y, physic_mode, radius, render_mode)
         animation = math.random(0, sprite_animation_steps),
         angle = 0,
         heat = 0,
-        maxSpeed = 300, maxForce = 10,
+        maxSpeed = 500, maxForce = 20,
         ax = 0, ay = 0
     }
     result.body = love.physics.newBody(world, x, y, physic_mode)
@@ -98,24 +98,31 @@ function body(x, y, physic_mode, radius, render_mode)
 
     function result.followPath(self, path)
         local PREDICTOR_LENGTH = 25
-        local TARGET_LENGTH = 50
+        local TARGET_LENGTH = 100
         local px, py = self.body:getPosition()
         local vx, vy = self.body:getLinearVelocity()
-        if vx == 0 or vy == 0 then vx, vy = 0.1, 0.1 end
+        if vx == 0 or vy == 0 then vx, vy = 0.01, 0.01 end
         local predictX, predictY = normalize(vx, vy)
         predictX, predictY = predictX * PREDICTOR_LENGTH, predictY * PREDICTOR_LENGTH
         local plx, ply = px + predictX, py + predictY
 
-        local startX, startY, endX, endY = path:getLastLine()
-        if not startX then return end
-        local npx, npy = projectOnLine(plx, ply, startX, startY, endX, endY)
+        local bestDistance = 9999999
+        local targetX, targetY = nil, nil
+        local iter = path:getSegmentIterator()
+        while true do
+            local ax, ay, bx, by = iter()
+            if ax == nil then break end
+            local npx, npy = closestPointToPoint(plx, ply, ax, ay, bx, by, true)
+            local distance = distance(npx, npy, plx, ply)
+            if distance < bestDistance then
+                bestDistance = distance
+                local dirX, dirY = normalize(bx - ax, by - ay)
+                dirX, dirY = dirX * TARGET_LENGTH, dirY * TARGET_LENGTH
+                targetX, targetY = npx + dirX, npy + dirY
+            end
+        end
 
-        local dirX, dirY = normalize(endX - startX, endY - startY)
-        dirX, dirY = dirX * TARGET_LENGTH, dirY * TARGET_LENGTH
-        local targetX, targetY = npx + dirX, npy + dirY
-
-        local distance = distance(npx, npy, plx, ply)
-        if distance > path.radius then
+        if targetX ~= nil and bestDistance > path.radius then
             self:seek(targetX, targetY)
         end
     end
@@ -124,7 +131,7 @@ function body(x, y, physic_mode, radius, render_mode)
         local vx, vy = self.body:getLinearVelocity()
         local nvx, nvy = vx + self.ax, vy + self.ay
         self.body:setLinearVelocity(nvx, nvy)
-        if nvx == 0 or nvy == 0 then nvx, nvy = 0.1, 0.1 end
+        if nvx == 0 or nvy == 0 then nvx, nvy = 0.01, 0.01 end
         local dx, dy = normalize(nvx, nvy)
         self.angle = angleFromDir(dx, dy)
         self.ax, self.ay = 0, 0
