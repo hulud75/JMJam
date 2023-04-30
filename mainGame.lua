@@ -48,7 +48,7 @@ function mainGame.load()
 
     shaman_sprites = load_sprites("shamanSheet_01.png")
     peon_sprites = load_sprites("peonPossessedSheet_01.png")
-    game_over_image = love.graphics.newImage("shamanSheet_01.png")
+    game_over_image = love.graphics.newImage("gameOver.png")
     
 end
 
@@ -109,8 +109,10 @@ function mainGame.draw()
             love.graphics.setColor(0,0,0,alpha)
             love.graphics.rectangle("fill", 0, 0, window_w, window_h)
             love.graphics.setColor(1,1,1,1)
-            scale = math.max(window_w / game_over_image:getWidth(), window_h / game_over_image:getHeight())
-            love.graphics.draw(game_over_image, 0, 0, 0, scale)
+            scale = math.min(window_w / game_over_image:getWidth(), window_h / game_over_image:getHeight())
+            x = (window_w-game_over_image:getWidth()*scale)/2
+            y = (window_h-game_over_image:getHeight()*scale)/2
+            love.graphics.draw(game_over_image, x, y, 0, scale)
         end
     end
 end
