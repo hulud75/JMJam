@@ -4,6 +4,7 @@ require("mainGame")
 
 
 debug = true
+full_screen = false
 page = "menu"
 window_w = 1280
 window_h = 960
@@ -56,7 +57,12 @@ function love.load()
     mainMenu_bg:load()
     mainGame:load()
     buttonStart:load()
-    love.window.setMode(window_w, window_h)
+    if full_screen then
+        love.window.setFullscreen(true)
+        window_w, window_h = love.graphics.getDimensions()
+    else
+        love.window.setMode(window_w, window_h)
+    end
 end
 
 function love.mousepressed(mx, my, startButton)

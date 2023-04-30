@@ -4,9 +4,9 @@ local function normalize(x, y)
 end
 
 function load_body()
-    sprite_animation_steps = 8
+    sprite_animation_steps = 7
     sprite_dir_steps = 8
-    body_sprites_imageData = love.image.newImageData("sprites.png")
+    body_sprites_imageData = love.image.newImageData("shamanSheet_01.png")
     local remap_dir = {1, 0, 7, 6, 5, 4, 3, 2}
     body_sprites_image = love.graphics.newImage(body_sprites_imageData)
     body_sprite_w = body_sprites_imageData:getWidth() / sprite_animation_steps
