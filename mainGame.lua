@@ -23,6 +23,7 @@ scaleButton_Y = 125
 startButton_R = 0
 
 hero_speed = 400
+hero_speed_lava = 200
 
 isDown = love.keyboard.isDown
 
@@ -146,8 +147,9 @@ function mainGame.update(dt)
         end
     end
 
+    local speed = bg:isLava(hero_x, hero_y) and hero_speed_lava or hero_speed
     hero_dir_x, hero_dir_y = normalize(hero_dir_x, hero_dir_y)
-    hero_dir_x, hero_dir_y = mul(hero_dir_x, hero_dir_y, hero_speed*dt, hero_speed*dt)
+    hero_dir_x, hero_dir_y = mul(hero_dir_x, hero_dir_y, speed*dt, speed*dt)
 
     -- Update the hero position
     local diameter = hero.shape:getRadius()*2

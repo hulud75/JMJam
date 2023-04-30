@@ -65,9 +65,13 @@ function bg.draw_overlay(self)
 end
 
 function bg.heat(self, x, y)
+    return self:isLava(x, y) and 0.4 or 0
+end
+
+function bg.isLava(self, x, y)
     if (x >= 0 and x < self.w and y >= 0 and y < self.h) then
         r, g, b, a = bg.groundData:getPixel(x, y)
-        return a < 0.5 and 0.4 or 0
+        return a < 0.5
     end
-    return 0
+    return false
 end
