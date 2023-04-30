@@ -38,6 +38,7 @@ function mainGame.load()
 
     shaman_sprites = load_sprites("shamanSheet_01.png")
     peon_sprites = load_sprites("peonPossessedSheet_01.png")
+    peon_idle_sprites = load_sprites("peonIdleSheet_01.png")
     game_over_image = love.graphics.newImage("gameOver.png")
     youWin_image = love.graphics.newImage("youWin.png")
     vignette = love.graphics.newImage("vignette.png")
@@ -51,8 +52,8 @@ function mainGame.restart(self)
     world = love.physics.newWorld(0, 0, true)
     evil:restart()
     local start_x = math.sqrt(2)*math.max(window_w, window_h)*0.5
-    local start_y = bg.ground:getHeight()/2
-    hero = body(start_x, start_y, "static", people_radius, "fill", shaman_sprites, true)
+    local start_y = bg.ground:getHeight()/2+200
+    hero = body(start_x, start_y, "static", people_radius, "fill", shaman_sprites, shaman_sprites, true)
     hero.path = Path:new()
     hero.path:addPoint(start_x, start_y)
 
@@ -63,7 +64,7 @@ function mainGame.restart(self)
             x = math.random(0, bg.ground:getWidth())
             y = math.random(0, bg.ground:getHeight())
         until not bg:isLava(x, y)
-        local p = body(x, y, "dynamic", people_radius, "line", peon_sprites, false)
+        local p = body(x, y, "dynamic", people_radius, "line", peon_sprites, peon_idle_sprites, false)
         people[p] = true
     end
     game_over_time = nil
