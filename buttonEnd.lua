@@ -1,7 +1,7 @@
 buttonEnd = {}
 
 function buttonEnd.load(self)
-    buttonEnd.image = love.graphics.newImage("buttonStart.jpg")
+    buttonEnd.image = love.graphics.newImage("bgStartMenu.png")
 end
 
 function buttonEnd.draw(self,endButton_x,endButton_y,newWidth,newHeight)

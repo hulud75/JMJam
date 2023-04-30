@@ -6,6 +6,7 @@ require("burn")
 require("path")
 require("math_utils")
 require("sprites")
+require("mainScoreTxt")
 
 window_w = 1280
 window_h = 960
@@ -16,11 +17,10 @@ people_radius = 16
 screen_offset_x = 0
 screen_offset_y = 0
 
-endButton_x = 1100
-endtButton_y = -800
-scaleButton_X = 150
-scaleButton_Y = 125
-startButton_R = 0
+mainScoreTxt_x = 300
+mainScoreTxt_y = 800
+mainScoreTxt_sx = 600
+mainScoreTxt_sy = 600
 
 hero_speed = 400
 hero_speed_lava = 200
@@ -29,19 +29,9 @@ isDown = love.keyboard.isDown
 
 mainGame = {}
 
-
-eButton  = {
-    image  = buttonEnd.image,
-    x      = endButton_x,
-    y      = endButton_y,
-    width  = scaleButton_X,
-    height = scaleButton_Y,
-}
-
-
 function mainGame.load()
     bg:load()
-    buttonEnd:load()
+    mainScoreTxt:load()
     evil:load()
     burn:load()
     love.physics.setMeter(32)
@@ -91,7 +81,6 @@ end
 
 function mainGame.draw()
     bg:draw(screen_offset_x, screen_offset_y)
-    buttonEnd:draw(endButton_x,endButton_y,scaleButton_X,scaleButton_Y)
     hero:draw()
     if debug then hero.path:draw() end
     for p,k in pairs(people) do
@@ -120,6 +109,7 @@ function mainGame.draw()
             y = (window_h-game_over_image:getHeight()*scale)/2
             if hero.saved then
                 love.graphics.draw(youWin_image, x, y, 0, scale)
+                mainScoreTxt:draw(mainScoreTxt_x,mainScoreTxt_y,mainScoreTxt_sx,mainScoreTxt_sy)
             else
                 love.graphics.draw(game_over_image, x, y, 0, scale)
             end

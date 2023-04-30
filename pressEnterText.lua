@@ -1,10 +1,10 @@
-buttonStart = {}
+pressEnterText = {}
 
-function buttonStart.load(self)
-    buttonStart.image = love.graphics.newImage("buttonStart.png")
+function pressEnterText.load(self)
+    pressEnterText.image = love.graphics.newImage("pressEnter.png")
 end
 
-function buttonStart.draw(self,startButton_x,startButton_y,newWidth,newHeight)
+function pressEnterText.draw(self,startButton_x,startButton_y,newWidth,newHeight)
     currentWidth, currentHeight = self.image:getDimensions()
     newW = newWidth / currentWidth
     newH = newHeight / currentHeight

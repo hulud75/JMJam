@@ -1,4 +1,6 @@
 mainMenu_bg = {}
+menuTxtColor = {1, .75, 0, 1}
+
 
 function mainMenu_bg.load(self)
     mainMenu_bg.image = love.graphics.newImage("bgStartMenu.png")
