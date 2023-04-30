@@ -12,21 +12,21 @@ function Path:addPoint(px, py)
   table.insert(self.points, py)
 end
 
-function Path:getLastPoint()
+function Path:lastPoint()
   local size = #self.points
   if size >= 2 then
     return unpack(self.points, size - 1, size)
   end
 end
 
-function Path:getLastLine()
+function Path:lastSegment()
   local size = #self.points
   if size >= 4 then
   	return unpack(self.points, size - 3, size)
   end
 end
 
-function Path:getSegmentIterator()
+function Path:segments()
   local i = -3
   local size = #self.points
   return function()

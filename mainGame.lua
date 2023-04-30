@@ -161,7 +161,7 @@ function mainGame.update(dt)
     clampScreen(0, window_h)
 
     hero:update(dt)
-    local lpx, lpy = hero.path:getLastPoint()
+    local lpx, lpy = hero.path:lastPoint()
     if distance(hero_x, hero_y, lpx, lpy) > 100 then
         hero.path:addPoint(hero_x, hero_y)
     end

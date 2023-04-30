@@ -30,9 +30,7 @@ end
 function closestPointToPointParameter(px, py, ax, ay, bx, by, clampToLine)
   local apx, apy = px - ax, py - ay
   local abx, aby = bx - ax, by - ay
-  local abap = dot(abx, aby, apx, apy)
-  local abab = dot(abx, aby, abx, aby)
-  local t = abap / abab
+  local t = dot(abx, aby, apx, apy) / dot(abx, aby, abx, aby)
   if clampToLine then
     t = clamp(t, 0, 1)
   end

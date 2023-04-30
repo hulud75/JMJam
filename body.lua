@@ -89,7 +89,7 @@ function body(x, y, physic_mode, radius, render_mode, sprites)
 
         local bestDistance = 9999999
         local targetX, targetY = nil, nil
-        for ax, ay, bx, by in path:getSegmentIterator() do
+        for ax, ay, bx, by in path:segments() do
             local npx, npy = closestPointToPoint(plx, ply, ax, ay, bx, by, true)
             local distance = distance(npx, npy, plx, ply)
             if distance < bestDistance then
