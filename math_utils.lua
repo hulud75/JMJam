@@ -62,12 +62,11 @@ function rotate(x, y, a)
 end
 
 function worldToScreen(x, y)
-  x, y = rotate(x, y, -math.pi/4)
   return x-screen_offset_x, y-screen_offset_y
 end
 
 function screenToWorld(x, y)
-  return rotate(x+screen_offset_x, y+screen_offset_y, math.pi/4)
+  return x+screen_offset_x, y+screen_offset_y
 end
 
 function clamp(x, min, max)

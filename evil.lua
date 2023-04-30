@@ -6,7 +6,7 @@ function evil.load(self)
 end
 
 function evil.draw(self)
-    local r = -math.pi/4
+    local r = 0
     dx, dy = rotate(self.x, 0, r)
     love.graphics.draw(self.image, dx-screen_offset_x, dy-screen_offset_y, r)
 end

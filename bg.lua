@@ -48,7 +48,7 @@ function bg.update(self, dt)
 end
 
 function bg.draw(self)
-    local r = -math.pi/4
+    local r = 0
 
     love.graphics.setShader(bg.shader)
     love.graphics.draw(self.lava, bg.lava_quad, -screen_offset_x, -screen_offset_y, r)
@@ -58,7 +58,7 @@ function bg.draw(self)
 end
 
 function bg.draw_overlay(self)
-    local r = -math.pi/4
+    local r = 0
     love.graphics.setBlendMode("add")
     love.graphics.draw(self.lava_heat, -screen_offset_x, -screen_offset_y, r, 4)
     love.graphics.setBlendMode("alpha")

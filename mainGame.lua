@@ -133,16 +133,16 @@ function mainGame.update(dt)
 
     if hero.alive then
         if isDown("right") then
-            move_hero(1, 1)
+            move_hero(1, 0)
         end
         if isDown("left") then
-            move_hero(-1, -1)
+            move_hero(-1, 0)
         end
         if isDown("up") then
-            move_hero(1, -1)
+            move_hero(0, -1)
         end
         if isDown("down") then
-            move_hero(-1, 1)
+            move_hero(0, 1)
         end
     end
 
