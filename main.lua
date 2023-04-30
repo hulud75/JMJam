@@ -41,10 +41,7 @@ function love.load()
     else
         love.window.setMode(window_w, window_h)
     end
-    pressEnterText.load()
-    menuGameText.load()
     world = love.physics.newWorld(0, 0, true)
-    mainGame:restart()
 end
 
 function love.mousepressed(mx, my, startButton)
