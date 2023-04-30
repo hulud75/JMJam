@@ -5,6 +5,7 @@ require("evil")
 require("burn")
 require("path")
 require("math_utils")
+require("sprites")
 
 window_w = 1280
 window_h = 960
@@ -44,20 +45,22 @@ function mainGame.load()
     buttonEnd:load()
     evil:load()
     burn:load()
-    load_body()
     love.physics.setMeter(32)
     world = love.physics.newWorld(0, 0, true)
+
+    local shaman_sprites = load_sprites("shamanSheet_01.png")
+    local peon_sprites = load_sprites("peonPossessedSheet_01.png")
     
     local start_x = math.sqrt(2)*math.max(window_w, window_h)*0.5
     local start_y = bg.ground:getHeight()/2
-    hero = body(start_x, start_y, "static", people_radius, "fill")
+    hero = body(start_x, start_y, "static", people_radius, "fill", shaman_sprites)
     hero.path = Path:new()
     hero.path:addPoint(start_x, start_y)
 
     for i=1,people_count do
         local x = math.random(0, bg.ground:getWidth())
         local y = math.random(0, bg.ground:getHeight())
-        local p = body(x, y, "dynamic", people_radius, "line")
+        local p = body(x, y, "dynamic", people_radius, "line", peon_sprites)
         people[p] = true
     end
 end

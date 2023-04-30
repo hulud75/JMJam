@@ -1,32 +1,15 @@
 require("math_utils")
 
-function load_body()
-    sprite_animation_steps = 7
-    sprite_dir_steps = 8
-    body_sprites_imageData = love.image.newImageData("shamanSheet_01.png")
-    local remap_dir = {2, 1, 0, 7, 6, 5, 4, 3}
-    body_sprites_image = love.graphics.newImage(body_sprites_imageData)
-    body_sprite_w = body_sprites_imageData:getWidth() / sprite_animation_steps
-    body_sprite_h = body_sprites_imageData:getHeight() / sprite_dir_steps
-    body_sprites_quads = {}
-    for step = 0,sprite_animation_steps-1 do
-        local dirs = {}
-        table.insert(body_sprites_quads, dirs)
-        for dir = 1,sprite_dir_steps do
-            dirs[dir] = love.graphics.newQuad(step*body_sprite_h, remap_dir[dir]*body_sprite_h, body_sprite_h, body_sprite_h, body_sprites_image)
-        end
-    end
-end
-
-function body(x, y, physic_mode, radius, render_mode)
+function body(x, y, physic_mode, radius, render_mode, sprites)
     local result = {
         render_mode = render_mode,
         alive = true,
-        animation = math.random(0, sprite_animation_steps),
+        animation = math.random(0, sprites.animation_steps),
         angle = 0,
         heat = 0,
         maxSpeed = 700, maxForce = 20,
-        ax = 0, ay = 0
+        ax = 0, ay = 0,
+        sprites = sprites
     }
     result.body = love.physics.newBody(world, x, y, physic_mode)
     result.shape = love.physics.newCircleShape(radius)
@@ -37,9 +20,7 @@ function body(x, y, physic_mode, radius, render_mode)
         local radius = self.shape:getRadius()
         love.graphics.setColor(1, 1-self.heat, 1-self.heat)
 
-        local anim_frame = math.floor(math.mod(self.animation, sprite_animation_steps))+1
-        local dir = math.floor(math.mod(self.angle * sprite_dir_steps / (2.0*math.pi) + 0.5, sprite_dir_steps))+1
-        love.graphics.draw(body_sprites_image, body_sprites_quads[anim_frame][dir], (x + radius) - body_sprite_w/2, (y + radius) - body_sprite_h/2)
+        self.sprites:draw((x + radius) - self.sprites.w/2, (y + radius) - self.sprites.h/2, self.animation, self.angle)
 
         love.graphics.setColor(1, 1, 1)
     end

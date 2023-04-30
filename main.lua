@@ -2,10 +2,10 @@ require("mainMenu_bg")
 require("buttonStart")
 require("mainGame")
 
-
-debug = true
-full_screen = false
-page = "menu"
+release = true
+debug = false and not release
+full_screen = false or release
+page = "game" or (release and "menu")
 window_w = 1280
 window_h = 960
 speed = 100
