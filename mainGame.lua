@@ -27,11 +27,12 @@ hero_speed_lava = 200
 
 isDown = love.keyboard.isDown
 
+scoreTextSize = 75
+
 mainGame = {}
 
 function mainGame.load()
     bg:load()
-    mainScoreTxt:load()
     evil:load()
     burn:load()
     love.physics.setMeter(32)
@@ -121,8 +122,9 @@ function mainGame.draw()
             local x = (window_w-game_over_image:getWidth()*scale)/2
             local y = (window_h-game_over_image:getHeight()*scale)/2
             if hero.saved then
+                totalSaved = people_count - score_saved
                 love.graphics.draw(youWin_image, x, y, 0, scale)
-                mainScoreTxt:draw(mainScoreTxt_x,mainScoreTxt_y,mainScoreTxt_sx,mainScoreTxt_sy)
+                mainScoreTxt:draw(75,totalSaved,900,800)
             else
                 love.graphics.draw(game_over_image, x, y, 0, scale)
             end

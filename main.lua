@@ -3,8 +3,6 @@ math.randomseed(os.time())
 require("mainMenu_bg")
 require("buttonStart")
 require("mainGame")
-require("pressEnterText")
-require("menuGameText")
 
 release = true
 debug = false and not release
@@ -22,23 +20,6 @@ screen_offset_y = 0
 
 mainMenu_newWidth = 1920
 mainMenu_newHeight = 1080
-
-startButton_x = 50
-startButton_y = 800
-scaleButton_X = 150
-scaleButton_Y = 125
-startButton_R = 0
-
-pressEnterText_x = 500
-pressEnterText_y = 300
-pressEnterText_sx = 1000
-pressEnterText_sy = 1080
-
-menuGameText_x = 300
-menuGameText_y = 50
-menuGameText_sx = 1000
-menuGameText_sy = 1000
-
 
 isDown = love.keyboard.isDown
 loadVal = 0
@@ -63,6 +44,7 @@ function love.load()
     pressEnterText.load()
     menuGameText.load()
     world = love.physics.newWorld(0, 0, true)
+    mainGame:restart()
 end
 
 function love.mousepressed(mx, my, startButton)
@@ -86,8 +68,6 @@ end
 function love.draw()
     if page == "menu" then
         mainMenu_bg:draw(screen_offset_x, screen_offset_y, mainMenu_newWidth,mainMenu_newHeight)
-        menuGameText:draw(world_x, world_y,menuGameText_sx,menuGameText_sy)
-        pressEnterText:draw(pressEnterText_x,pressEnterText_y,pressEnterText_sx,pressEnterText_sy)
     else
         mainGame:draw()
     end
