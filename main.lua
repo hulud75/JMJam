@@ -47,12 +47,12 @@ function love.load()
     else
         love.window.setMode(window_w, window_h)
     end
-    mainGame:restart()
 end
 
 function love.mousepressed(mx, my, startButton)
     if startButton == 1 and mx >= sButton.x and mx < sButton.x+sButton.width and my >= sButton.y and my < sButton.y+sButton.height then
         page = "mainGame"
+        mainGame:restart()
     end
 end
     

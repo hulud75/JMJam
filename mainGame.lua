@@ -50,10 +50,12 @@ function mainGame.load()
     peon_sprites = load_sprites("peonPossessedSheet_01.png")
     game_over_image = love.graphics.newImage("gameOver.png")
     youWin_image = love.graphics.newImage("youWin.png")
-    
+
+    music = love.audio.newSource( "A1-0001_testZic01.mp3", "stream" )
 end
 
 function mainGame.restart(self)
+    love.audio.play( music )
     score_saved = 0
     world = love.physics.newWorld(0, 0, true)
     evil:restart()
@@ -107,6 +109,7 @@ function mainGame.draw()
             game_over_time = time
         end
         if time > game_over_time+wait_time then
+            music:stop()
             game_over = true
             alpha = math.max(0, (time - wait_time - game_over_time) / fade_time)
             love.graphics.setColor(0,0,0,alpha)
