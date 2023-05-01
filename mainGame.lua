@@ -45,7 +45,7 @@ function mainGame.load()
     vignette = love.graphics.newImage("vignette.png")
 
     music = love.audio.newSource( "A1-0001_testZic01.mp3", "stream" )
-    gogogo = love.audio.newSource( "gogogo.mp3", "stream" )
+    gogogo = love.audio.newSource( "goGoGo.mp3", "stream" )
     youLoose = love.audio.newSource( "youLoose.mp3", "stream" )
     youWin = love.audio.newSource( "youWin.mp3", "stream" )
 end

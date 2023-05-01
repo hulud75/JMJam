@@ -43,13 +43,6 @@ function love.load()
     world = love.physics.newWorld(0, 0, true)
 end
 
-function love.mousepressed(mx, my, startButton)
-    if startButton == 1 and mx >= sButton.x and mx < sButton.x+sButton.width and my >= sButton.y and my < sButton.y+sButton.height then
-        page = "mainGame"
-        mainGame:restart()
-    end
-end
-
 function love.keypressed(key)
     if page == "menu" then
         if key == "return" then
