@@ -12,7 +12,6 @@ window_w = 1920
 window_h = 1080
 
 speed = 100
-people_count = 300
 people_radius = 16
 -- world coordinate of the upper left corner
 screen_offset_x = 0

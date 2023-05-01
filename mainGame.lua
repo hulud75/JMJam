@@ -11,7 +11,7 @@ require("mainScoreTxt")
 window_w = 1280
 window_h = 960
 speed = 100
-people_count = 300
+people_count = 3000
 people_radius = 16
 -- Screen offset
 screen_offset_x = 0
@@ -122,7 +122,7 @@ function mainGame.draw()
             local x = (window_w-game_over_image:getWidth()*scale)/2
             local y = (window_h-game_over_image:getHeight()*scale)/2
             if hero.saved then
-                totalSaved = people_count - score_saved
+                totalSaved = score_saved
                 love.graphics.draw(youWin_image, x, y, 0, scale)
                 mainScoreTxt:draw(75,totalSaved,900,800)
             else
